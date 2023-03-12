@@ -1,0 +1,81 @@
+version: '3.3'
+
+services:
+
+  projects:
+    image: tiggomark/projects:latest
+    container_name: tiggomark_projects
+    network_mode: "host"
+    environment:
+      #LEAN_APP_URL: 'https://vpn.tiggomark.com.br'                     # Only needed for subdirectory setup; protocol (http or https) and base URL , trailing slash not needed
+      LEAN_SITENAME: 'Tiggomark'                                         # Name of your site, can be changed later
+      LEAN_DB_HOST: '0.0.0.0'                                    # Database host, derived from container_name in tiggomark_db container
+      SAAS_CONNECTOR_URL: 'http://localhost:8080'
+      SAAS_CONNECTOR_APP_TOKEN: 'app-token'
+      LEAN_DB_USER: 'root'
+      LEAN_DB_PASSWORD: '321.qwerty'
+      LEAN_DB_PORT: 3309
+      LEAN_DB_DATABASE: 'tiggomark'
+      LEAN_DEFAULT_TIMEZONE: 'Europe/Stockholm'                         # Set default server timezone
+      LEAN_SESSION_PASSWORD: 'GD8Fozemg3AqM9my86TTfgTeGPXXkPF7'         # Salting sessions. Replace with a strong password
+      LEAN_SESSION_EXPIRATION: 28800                                    # How many seconds after inactivity should we logout?  28800seconds = 8hours
+    volumes:
+      - projects_public_user-files:/var/www/html/public/userfiles
+      - projects_user-files:/var/www/html/userfiles
+    depends_on:
+      - projects_db
+
+  projects_db:
+    image: mysql:8.0
+    container_name: tiggomark_projects_db
+    volumes:
+      - projects_db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: '321.qwerty'
+      MYSQL_DATABASE: 'tiggomark'
+      MYSQL_USER: 'admin'
+      MYSQL_TCP_PORT: '3309'
+      MYSQL_PASSWORD: '321.qwerty'
+    command: --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    ports:
+      - "3309:3309"
+
+
+  saas_connector:
+    image: tiggomark/saas-connector:latest
+    container_name: tiggomark_saas_connector
+    network_mode: "host"
+    environment:
+      DB_HOST: localhost
+      DB_PORT: 4500
+      DB_NAME: saasconnector
+      DB_USERNAME: root
+      DB_PASSWORD: 123456789
+
+    depends_on:
+      - saas_connector_db
+
+  saas_connector_db:
+    image: mysql:8
+    container_name: tiggomark_saas_connector_db
+    environment:
+      MYSQL_DATABASE: saasconnector
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 123456789
+      MYSQL_ROOT_PASSWORD: 123456789
+    ports:
+      - "4500:3306"
+    volumes:
+      - saas_connector_db_data:/var/lib/mysql
+
+
+volumes:
+  projects_user-files:
+  projects_public_user-files:
+  projects_db_data:
+  saas_connector_db_data:
+
+
+
+
+

@@ -1,0 +1,122 @@
+version: '3.7'
+
+services:
+  projects:
+    image: tiggomark/projects:latest
+    hostname: projects-hostname
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: ingress
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '256M'
+    environment:
+      LEAN_SITENAME: 'Tiggomark'
+      LEAN_DB_HOST: 'tiggomark_projects_db'
+      SAAS_CONNECTOR_URL: 'http://localhost:8080'
+      SAAS_CONNECTOR_APP_TOKEN: 'app-token'
+      LEAN_DB_USER: 'root'
+      LEAN_DB_PASSWORD: '321.qwerty'
+      LEAN_DB_PORT: '3309'
+      LEAN_DB_DATABASE: 'tiggomark'
+      LEAN_DEFAULT_TIMEZONE: 'Europe/Stockholm'
+      LEAN_SESSION_PASSWORD: 'GD8Fozemg3AqM9my86TTfgTeGPXXkPF7'
+      LEAN_SESSION_EXPIRATION: 28800
+    volumes:
+      - projects_public_user-files:/var/www/html/public/userfiles
+      - projects_user-files:/var/www/html/userfiles
+    depends_on:
+        - projects_db
+    networks:
+      - tiggomark_network
+
+  projects_db:
+    image: mysql:8.0
+    hostname: tiggomark_projects_db
+    ports:
+      - target: 3309
+        published: 3306
+        protocol: tcp
+        mode: ingress
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '256M'
+    environment:
+      MYSQL_ROOT_PASSWORD: '321.qwerty'
+      MYSQL_DATABASE: 'tiggomark'
+      MYSQL_USER: 'admin'
+      MYSQL_TCP_PORT: '3309'
+      MYSQL_PASSWORD: '321.qwerty'
+    command: --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    volumes:
+      - projects_db_data:/var/lib/mysql
+    networks:
+      - tiggomark_network
+
+  saas_connector:
+    image: tiggomark/saas-connector:latest
+    hostname: saas-connector-hostname
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '256M'
+    environment:
+      USER_WEBHOOK: 'http://projects-hostname/api/userwebhook'
+      DB_HOST: 'tiggomark_saas_connector_db'
+      DB_PORT: '3306'
+      DB_NAME: 'saasconnector'
+      DB_USERNAME: 'root'
+      DB_PASSWORD: '123456789'
+    depends_on:
+        - saas_connector_db
+    networks:
+      - tiggomark_network
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: ingress
+
+  saas_connector_db:
+    image: mysql:8
+    hostname: tiggomark_saas_connector_db
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '256M'
+    environment:
+      MYSQL_DATABASE: 'saasconnector'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: '123456789'
+      MYSQL_ROOT_PASSWORD: '123456789'
+    volumes:
+      - saas_connector_db_data:/var/lib/mysql
+    ports:
+      - target: 3306
+        published: 4500
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+
+volumes:
+  projects_user-files:
+  projects_public_user-files:
+  projects_db_data:
+  saas_connector_db_data:
+
+networks:
+  tiggomark_network:
+    driver: overlay
