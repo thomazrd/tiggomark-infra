@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: projects
+  name: projects
+spec:
+  selector:
+    matchLabels:
+      io.kompose.service: projects
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.22.0 (955b78124)
+        hostname: projects
+      creationTimestamp: null
+      labels:
+        io.kompose.network/tiggomark-network: "true"
+        io.kompose.service: projects
+    spec:
+      containers:
+        - env:
+            - name: LEAN_DB_DATABASE
+              value: tiggomark
+            - name: LEAN_DB_HOST
+              value: projects-db
+            - name: LEAN_DB_PASSWORD
+              value: 321.qwerty
+            - name: LEAN_DB_PORT
+              value: "3306"
+            - name: LEAN_DB_USER
+              value: root
+            - name: LEAN_DEFAULT_TIMEZONE
+              value: Europe/Stockholm
+            - name: LEAN_SESSION_EXPIRATION
+              value: "28800"
+            - name: LEAN_SESSION_PASSWORD
+              value: GD8Fozemg3AqM9my86TTfgTeGPXXkPF7
+            - name: LEAN_SITENAME
+              value: Tiggomark
+            - name: SAAS_CONNECTOR_APP_TOKEN
+              value: app-token
+            - name: SAAS_CONNECTOR_URL
+              value: http://localhost:8080
+          image: tiggomark/projects:latest
+          name: projects
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 500m
+              memory: "268435456"
+          volumeMounts:
+            - mountPath: /var/www/html/public/userfiles
+              name: projects-public-user-files
+            - mountPath: /var/www/html/userfiles
+              name: projects-user-files
+      hostname: projects-hostname
+      restartPolicy: Always
+      volumes:
+        - name: projects-public-user-files
+          persistentVolumeClaim:
+            claimName: projects-public-user-files
+        - name: projects-user-files
+          persistentVolumeClaim:
+            claimName: projects-user-files
+status: {}

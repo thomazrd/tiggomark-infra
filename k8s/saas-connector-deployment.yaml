@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: saas-connector
+  name: saas-connector
+spec:
+  selector:
+    matchLabels:
+      io.kompose.service: saas-connector
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/tiggomark-network: "true"
+        io.kompose.service: saas-connector
+    spec:
+      containers:
+        - env:
+            - name: DB_HOST
+              value: saas-connector-db
+            - name: DB_NAME
+              value: saasconnector
+            - name: DB_PASSWORD
+              value: "123456789"
+            - name: DB_PORT
+              value: "4500"
+            - name: DB_USERNAME
+              value: root
+            - name: USER_WEBHOOK
+              value: http://projects/api/userwebhook
+          image: tiggomark/saas-connector:latest
+          name: saas-connector
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: 500m
+              memory: "268435456"
+      hostname: saas-connector-hostname
+      restartPolicy: Always
+status: {}

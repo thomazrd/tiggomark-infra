@@ -73,6 +73,7 @@ services:
     environment:
       USER_WEBHOOK: 'http://projects-hostname/api/userwebhook'
       DB_HOST: 'tiggomark_saas_connector_db'
+      ASAAS_URL: 'https://sandbox.asaas.com'
       DB_PORT: '3306'
       DB_NAME: 'saasconnector'
       DB_USERNAME: 'root'
@@ -117,6 +118,16 @@ volumes:
   projects_db_data:
   saas_connector_db_data:
 
+
+
+
 networks:
   tiggomark_network:
     driver: overlay
+    ipam:
+        config:
+            - subnet: 10.0.9.0/24
+    attachable: true
+
+
+
