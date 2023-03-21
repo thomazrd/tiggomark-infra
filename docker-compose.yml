@@ -23,11 +23,13 @@ services:
       - projects_user-files:/var/www/html/userfiles
     ports:
       - "8081:80"
+
     depends_on:
       - projects_db
 
   projects_db:
     image: mysql:8.0
+
     container_name: tiggomark_projects_db
     volumes:
       - projects_db_data:/var/lib/mysql
@@ -37,6 +39,7 @@ services:
       MYSQL_USER: 'admin'
       MYSQL_TCP_PORT: '3309'
       MYSQL_PASSWORD: '321.qwerty'
+
     command: --character-set-server=utf8 --collation-server=utf8_unicode_ci
     ports:
       - "3309:3309"
@@ -45,6 +48,7 @@ services:
   saas_connector:
     image: tiggomark/saas-connector:latest
     container_name: tiggomark_saas_connector
+    network_mode: "host"
     environment:
       DB_HOST: localhost
       DB_PORT: 4500
@@ -54,8 +58,6 @@ services:
 
     depends_on:
       - saas_connector_db
-    ports:
-      - "8080:8080"
 
   saas_connector_db:
     image: mysql:8
@@ -72,7 +74,7 @@ services:
 
   nginx:
     image: nginx
-    container_name: nginx
+    container_name: nginx_infra
     restart: unless-stopped
     volumes:
       - ./ssl/nginx.conf:/etc/nginx/conf.d/default.conf
@@ -82,7 +84,9 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      - tiggomark
+      - projects
+
+
 
 
 volumes:
