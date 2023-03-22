@@ -150,6 +150,7 @@ volumes:
   projects_db_data:
   saas_connector_db_data:
   tiggomark-projects_db_data:
+    external: true
 
 
 
