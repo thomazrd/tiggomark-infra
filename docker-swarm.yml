@@ -3,6 +3,31 @@ version: '3.7'
 services:
 
 
+  projects_db:
+    image: mysql:8.0
+    hostname: tiggomark-projects-db
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '256M'
+    environment:
+      MYSQL_DATABASE: 'saasconnector'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: '123456789'
+      MYSQL_ROOT_PASSWORD: '123456789'
+    volumes:
+      - projects_db_data_cl:/var/lib/mysql
+    ports:
+      - target: 3306
+        published: 3306
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+
+
   projects:
     image: tiggomark/projects:latest
     hostname: projects-hostname
@@ -20,12 +45,12 @@ services:
           memory: '256M'
     environment:
       TIGGO_SITENAME: 'Tiggomark'
-      TIGGO_DB_HOST: 'tiggomark_saas_connector_db'
-      SAAS_CONNECTOR_URL: 'http://saas-connector-hostname:8080'
+      TIGGO_DB_HOST: 'tiggomark-projects-db'
+      SAAS_CONNECTOR_URL: 'http://localhost:8080'
       SAAS_CONNECTOR_APP_TOKEN: 'app-token'
       TIGGO_DB_USER: 'root'
       TIGGO_DB_PASSWORD: '123456789'
-      TIGGO_DB_PORT: '4500'
+      TIGGO_DB_PORT: '3306'
       TIGGO_DB_DATABASE: 'saasconnector'
       TIGGO_DEFAULT_TIMEZONE: 'Europe/Stockholm'
       TIGGO_SESSION_PASSWORD: 'GD8Fozemg3AqM9my86TTfgTeGPXXkPF7'
@@ -44,7 +69,7 @@ services:
     image: tiggomark/saas-connector:latest
     hostname: saas-connector-hostname
     deploy:
-      replicas: 1
+      replicas: 2
       resources:
         limits:
           cpus: '0.5'
@@ -53,7 +78,7 @@ services:
       USER_WEBHOOK: 'http://projects-hostname/api/userwebhook'
       DB_HOST: 'tiggomark_saas_connector_db'
       ASAAS_URL: 'https://sandbox.asaas.com'
-      DB_PORT: '4500'
+      DB_PORT: '3306'
       DB_NAME: 'saasconnector'
       DB_USERNAME: 'root'
       DB_PASSWORD: '123456789'
@@ -82,7 +107,7 @@ services:
       MYSQL_PASSWORD: '123456789'
       MYSQL_ROOT_PASSWORD: '123456789'
     volumes:
-      - cl_saas_connector_db_data:/var/lib/mysql
+      - saas_connector_db_data_cl:/var/lib/mysql
     ports:
       - target: 3306
         published: 4500
@@ -122,8 +147,8 @@ services:
 volumes:
   projects_user-files:
   projects_public_user-files:
-  cl_projects_db_data:
-  cl_saas_connector_db_data:
+  projects_db_data_cl:
+  saas_connector_db_data_cl:
 
 
 networks:
