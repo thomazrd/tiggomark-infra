@@ -45,7 +45,7 @@ services:
           memory: '256M'
     environment:
       TIGGO_SITENAME: 'Tiggomark'
-      TIGGO_DB_HOST: 'tiggomark-projects-db'
+      TIGGO_DB_HOST: 'tiggomark_saas_connector_db'
       SAAS_CONNECTOR_URL: 'http://localhost:8080'
       SAAS_CONNECTOR_APP_TOKEN: 'app-token'
       TIGGO_DB_USER: 'root'
