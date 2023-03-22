@@ -116,6 +116,7 @@ services:
         protocol: tcp
         mode: ingress
 
+
     networks:
       - tiggomark_network
 
