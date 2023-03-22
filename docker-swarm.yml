@@ -18,7 +18,7 @@ services:
       MYSQL_PASSWORD: '123456789'
       MYSQL_ROOT_PASSWORD: '123456789'
     volumes:
-      - tiggomark-projects_db_data:/var/lib/mysql
+      - projects_db_data:/var/lib/mysql
     ports:
       - target: 3306
         published: 3306
@@ -149,8 +149,7 @@ volumes:
   projects_public_user-files:
   projects_db_data:
   saas_connector_db_data:
-  tiggomark-projects_db_data:
-    external: true
+
 
 
 
