@@ -45,7 +45,7 @@ services:
           memory: '256M'
     environment:
       TIGGO_SITENAME: 'Tiggomark'
-      TIGGO_DB_HOST: 'tiggomark_saas_connector_db'
+      TIGGO_DB_HOST: 'tiggomark-projects-db'
       SAAS_CONNECTOR_URL: 'http://localhost:8080'
       SAAS_CONNECTOR_APP_TOKEN: 'app-token'
       TIGGO_DB_USER: 'root'
@@ -78,7 +78,7 @@ services:
       USER_WEBHOOK: 'http://projects-hostname/api/userwebhook'
       DB_HOST: 'tiggomark_saas_connector_db'
       ASAAS_URL: 'https://sandbox.asaas.com'
-      DB_PORT: '3307'
+      DB_PORT: '3306'
       DB_NAME: 'saasconnector'
       DB_USERNAME: 'root'
       DB_PASSWORD: '123456789'
