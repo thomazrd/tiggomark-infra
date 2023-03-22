@@ -15,12 +15,13 @@ services:
     environment:
       MYSQL_DATABASE: 'saasconnector'
       MYSQL_USER: 'admin'
+      MYSQL_TCP_PORT: 3307
       MYSQL_PASSWORD: '123456789'
       MYSQL_ROOT_PASSWORD: '123456789'
     volumes:
       - projects_db_data_cl:/var/lib/mysql
     ports:
-      - target: 3306
+      - target: 3307
         published: 3307
         protocol: tcp
         mode: ingress
