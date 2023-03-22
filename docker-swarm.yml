@@ -18,7 +18,7 @@ services:
       MYSQL_PASSWORD: '123456789'
       MYSQL_ROOT_PASSWORD: '123456789'
     volumes:
-      - projects_db_data:/var/lib/mysql
+      - cl_projects_db_data:/var/lib/mysql
     ports:
       - target: 3306
         published: 3306
@@ -107,7 +107,7 @@ services:
       MYSQL_PASSWORD: '123456789'
       MYSQL_ROOT_PASSWORD: '123456789'
     volumes:
-      - saas_connector_db_data:/var/lib/mysql
+      - cl_saas_connector_db_data:/var/lib/mysql
     ports:
       - target: 3306
         published: 4500
@@ -147,11 +147,8 @@ services:
 volumes:
   projects_user-files:
   projects_public_user-files:
-  projects_db_data:
-  saas_connector_db_data:
-
-
-
+  cl_projects_db_data:
+  cl_saas_connector_db_data:
 
 
 networks:
