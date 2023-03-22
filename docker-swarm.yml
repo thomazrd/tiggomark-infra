@@ -63,7 +63,7 @@ services:
       - tiggomark_network
     ports:
       - target: 8080
-        published: 8080
+        published: 8085
         protocol: tcp
         mode: ingress
 
