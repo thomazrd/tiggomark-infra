@@ -3,31 +3,6 @@ version: '3.7'
 services:
 
 
-  projects_db:
-    image: mysql:8.0
-    hostname: tiggomark-projects-db
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '256M'
-    environment:
-      MYSQL_DATABASE: 'saasconnector'
-      MYSQL_USER: 'admin'
-      MYSQL_PASSWORD: '123456789'
-      MYSQL_ROOT_PASSWORD: '123456789'
-    volumes:
-      - cl_projects_db_data:/var/lib/mysql
-    ports:
-      - target: 3306
-        published: 3306
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-
-
   projects:
     image: tiggomark/projects:latest
     hostname: projects-hostname
@@ -45,7 +20,7 @@ services:
           memory: '256M'
     environment:
       TIGGO_SITENAME: 'Tiggomark'
-      TIGGO_DB_HOST: 'tiggomark-projects-db'
+      TIGGO_DB_HOST: 'tiggomark_saas_connector_db'
       SAAS_CONNECTOR_URL: 'http://localhost:8080'
       SAAS_CONNECTOR_APP_TOKEN: 'app-token'
       TIGGO_DB_USER: 'root'
@@ -100,7 +75,7 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: '256M'
+          memory: '512M'
     environment:
       MYSQL_DATABASE: 'saasconnector'
       MYSQL_USER: 'admin'
