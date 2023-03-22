@@ -21,7 +21,7 @@ services:
     environment:
       TIGGO_SITENAME: 'Tiggomark'
       TIGGO_DB_HOST: 'tiggomark_saas_connector_db'
-      SAAS_CONNECTOR_URL: 'http://localhost:8080'
+      SAAS_CONNECTOR_URL: 'http://saas-connector-hostname:8080'
       SAAS_CONNECTOR_APP_TOKEN: 'app-token'
       TIGGO_DB_USER: 'root'
       TIGGO_DB_PASSWORD: '123456789'
