@@ -47,8 +47,8 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '0.5'
-          memory: '256M'
+          cpus: '1'
+          memory: '356M'
     environment:
       SPRING_PROFILES_ACTIVE: prod
       NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
