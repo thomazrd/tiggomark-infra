@@ -41,7 +41,7 @@ services:
 
 
   saas_connector:
-    image: tiggomark/saas-connector:latest
+    image: tiggomark/saas-connector:1.0.1
     hostname: saas-connector-hostname
     deploy:
       replicas: 1
@@ -50,7 +50,10 @@ services:
           cpus: '0.5'
           memory: '256M'
     environment:
+      SPRING_PROFILES_ACTIVE: prod
+      NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
       USER_WEBHOOK: 'http://projects-hostname/api/userwebhook'
+      OTEL_EXPORTER_OTLP_ENDPOINT: 'http://otel-collector:4317'
       DB_HOST: 'tiggomark_saas_connector_db'
       ASAAS_URL: 'https://sandbox.asaas.com'
       DB_PORT: '3306'
@@ -120,11 +123,14 @@ services:
     networks:
       - tiggomark_network
 
+
+
 volumes:
   projects_user-files:
   projects_public_user-files:
   projects_db_data_cl:
   saas_connector_db_data_cl:
+  clickhouse_data:
 
 
 networks:
