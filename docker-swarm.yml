@@ -69,10 +69,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
-      USER_WEBHOOK: 'http://projects-hostname/api/userwebhook'
       OTEL_EXPORTER_OTLP_ENDPOINT: 'http://otel-collector:4317'
       DB_HOST: 'tiggomark_saas_connector_db'
-      ASAAS_URL: 'https://sandbox.asaas.com'
       DB_PORT: '3306'
       DB_NAME: 'saasconnector'
       DB_USERNAME: 'root'
