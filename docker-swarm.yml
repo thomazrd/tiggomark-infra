@@ -3,6 +3,23 @@ version: '3.7'
 services:
 
 
+  portainer:
+    image: portainer/portainer-ce:latest
+    hostname: portainer-hostname
+    restart: unless-stopped
+    ports:
+      - target: 9000
+        published: 9000
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - tiggomark_network
+
+
+
   projects:
     image: tiggomark/projects:latest
     hostname: projects-hostname
