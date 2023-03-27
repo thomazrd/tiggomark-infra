@@ -54,6 +54,7 @@ services:
         - projects_db
     networks:
       - tiggomark_network
+      - nginx_network
 
 
 
@@ -79,6 +80,7 @@ services:
         - saas_connector_db
     networks:
       - tiggomark_network
+      - nginx_network
     ports:
       - target: 8080
         published: 8085
@@ -134,9 +136,9 @@ services:
         protocol: tcp
         mode: ingress
 
-
     networks:
       - tiggomark_network
+
 
 
 
@@ -156,6 +158,9 @@ networks:
         config:
             - subnet: 10.0.9.0/24
     attachable: true
+
+  nginx_network:
+    driver: overlay
 
 
 
