@@ -143,6 +143,7 @@ services:
 
 
 volumes:
+  portainer_data:
   projects_user-files:
   projects_public_user-files:
   projects_db_data_cl:
