@@ -65,7 +65,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '1'
+          cpus: '0.5'
           memory: '356M'
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -94,7 +94,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '1'
+          cpus: '0.5'
           memory: '356M'
     environment:
       MYSQL_DATABASE: 'saasconnector'
