@@ -122,7 +122,7 @@ services:
           cpus: '0.5'
           memory: '256M'
     volumes:
-      - ./ssl/default.conf:/etc/nginx/conf.d/default.conf
+      - ./ssl/nginx.conf:/etc/nginx/nginx.conf
       - ./ssl/fullchain.pem:/etc/letsencrypt/live/tiggomark.com.br/fullchain.pem
       - ./ssl/privkey.pem:/etc/letsencrypt/live/tiggomark.com.br/privkey.pem
     ports:
