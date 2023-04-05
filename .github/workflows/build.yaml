@@ -29,5 +29,5 @@ jobs:
            git clone ${{ env.INFRA_REPOSITORY }}
            cd tiggomark-infra
            docker stack deploy -c docker-swarm.yml ${{ env.CLUSTER_NAME }}
-           
+           docker service update --image nginx --detach=false --force cluster_nginx
 

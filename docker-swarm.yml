@@ -62,7 +62,7 @@ services:
     image: tiggomark/saas-connector:1.0.1
     hostname: saas-connector-hostname
     deploy:
-      replicas: 2
+      replicas: 1
       resources:
         limits:
           cpus: '0.5'
