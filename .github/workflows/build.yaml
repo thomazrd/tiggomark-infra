@@ -1,0 +1,31 @@
+name: Update Cluster
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  INFRA_REPOSITORY: https://github.com/thomazrd/tiggomark-infra.git
+  CLUSTER_NAME: cluster
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Update Cluster
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ vars.INFRA_SSH_HOST }}
+          username: ${{ secrets.INFRA_SSH_USERNAME }}
+          password: ${{ secrets.INFRA_SSH_PASSWORD }}
+          port: ${{ vars.INFRA_SSH_PORT }}
+          script: |
+           rm -rf tiggomark-infra
+           git clone ${{ env.INFRA_REPOSITORY }}
+           cd tiggomark-infra
+           docker stack deploy -c docker-swarm.yml ${{ env.CLUSTER_NAME }}
+           
+
