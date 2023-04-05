@@ -8,8 +8,8 @@ on:
 env:
   INFRA_REPOSITORY: https://github.com/thomazrd/tiggomark-infra.git
   CLUSTER_NAME: cluster
-  INFRA_HOST: 20.195.163.70
-  INFRA_PORT: 22
+  INFRA_SSH_HOST: 20.195.163.70
+  INFRA_SSH_PORT: 22
 
 jobs:
   build-and-push:
