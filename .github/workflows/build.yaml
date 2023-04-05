@@ -20,14 +20,14 @@ jobs:
       - name: Update Cluster
         uses: appleboy/ssh-action@v0.1.9
         with:
-          host: ${{ vars.INFRA_SSH_HOST }}
+          host: ${{ env.INFRA_SSH_HOST }}
           username: ${{ secrets.INFRA_SSH_USERNAME }}
           password: ${{ secrets.INFRA_SSH_PASSWORD }}
-          port: ${{ vars.INFRA_SSH_PORT }}
+          port: ${{ env.INFRA_SSH_PORT }}
           script: |
            rm -rf tiggomark-infra
-           git clone ${{ vars.INFRA_REPOSITORY }}
+           git clone ${{ env.INFRA_REPOSITORY }}
            cd tiggomark-infra
-           docker stack deploy -c docker-swarm.yml ${{ vars.CLUSTER_NAME }}
+           docker stack deploy -c docker-swarm.yml ${{ env.CLUSTER_NAME }}
            
 
