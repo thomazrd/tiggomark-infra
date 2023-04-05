@@ -8,6 +8,8 @@ on:
 env:
   INFRA_REPOSITORY: https://github.com/thomazrd/tiggomark-infra.git
   CLUSTER_NAME: cluster
+  INFRA_HOST: 20.195.163.70
+  INFRA_PORT: 22
 
 jobs:
   build-and-push:
@@ -24,8 +26,8 @@ jobs:
           port: ${{ vars.INFRA_SSH_PORT }}
           script: |
            rm -rf tiggomark-infra
-           git clone ${{ env.INFRA_REPOSITORY }}
+           git clone ${{ vars.INFRA_REPOSITORY }}
            cd tiggomark-infra
-           docker stack deploy -c docker-swarm.yml ${{ env.CLUSTER_NAME }}
+           docker stack deploy -c docker-swarm.yml ${{ vars.CLUSTER_NAME }}
            
 
