@@ -59,7 +59,7 @@ services:
 
 
   saas_connector:
-    image: tiggomark/saas-connector:1.0.1
+    image: tiggomark/saasconnector:latest
     hostname: saas-connector-hostname
     deploy:
       replicas: 1
