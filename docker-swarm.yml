@@ -6,7 +6,6 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     hostname: portainer-hostname
-    restart: unless-stopped
     ports:
       - target: 9000
         published: 9000
@@ -114,7 +113,6 @@ services:
   nginx:
     image: nginx
     hostname: nginx_infra
-    restart: unless-stopped
     deploy:
       replicas: 1
       resources:
