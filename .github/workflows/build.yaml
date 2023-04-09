@@ -1,7 +1,7 @@
 name: Update Cluster
 
 on:
-  push:
+  pull_request:
     branches:
       - master
 
