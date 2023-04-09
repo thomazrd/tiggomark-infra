@@ -34,8 +34,6 @@ services:
         limits:
           cpus: '0.5'
           memory: '256M'
-      update_config:
-        delay: 60s # aguarda 60 segundos antes de desativar o contêiner antigo
     healthcheck:
       test: curl --fail http://localhost:8081/auth/login || exit 1
       interval: 40s
@@ -72,8 +70,7 @@ services:
         limits:
           cpus: '0.5'
           memory: '512M'
-      update_config:
-        delay: 60s # aguarda 60 segundos antes de desativar o contêiner antigo
+
     healthcheck:
       test: curl --fail http://localhost:8085/actuator/health || exit 1
       interval: 40s
