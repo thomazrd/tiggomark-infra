@@ -61,8 +61,6 @@ services:
       - tiggomark_network
       - nginx_network
 
-
-
   saas_connector:
     image: tiggomark/saasconnector:latest
     hostname: saas-connector-hostname
