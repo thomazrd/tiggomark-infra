@@ -34,6 +34,12 @@ services:
         limits:
           cpus: '0.5'
           memory: '256M'
+    healthcheck:
+      test: curl --fail http://localhost:8081/auth/login || exit 1
+      interval: 40s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
     environment:
       TIGGO_SITENAME: 'Tiggomark'
       TIGGO_DB_HOST: 'tiggomark_saas_connector_db'
@@ -55,8 +61,6 @@ services:
       - tiggomark_network
       - nginx_network
 
-
-
   saas_connector:
     image: tiggomark/saasconnector:latest
     hostname: saas-connector-hostname
@@ -66,6 +70,12 @@ services:
         limits:
           cpus: '0.5'
           memory: '512M'
+    healthcheck:
+      test: curl --fail http://localhost:8085/actuator/health || exit 1
+      interval: 40s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
     environment:
       SPRING_PROFILES_ACTIVE: prod
       NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
@@ -137,7 +147,6 @@ services:
     networks:
       - tiggomark_network
       - nginx_network
-
 
 
 
