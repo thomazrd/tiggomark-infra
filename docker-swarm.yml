@@ -70,12 +70,15 @@ services:
         limits:
           cpus: '0.5'
           memory: '512M'
+      update_config:
+        delay: 60s # aguarda 60 segundos antes de desativar o contêiner antigo
     healthcheck:
       test: curl --fail http://localhost:8085/actuator/health || exit 1
       interval: 40s
       retries: 5
       start_period: 20s
       timeout: 10s
+
     environment:
       SPRING_PROFILES_ACTIVE: prod
       NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
