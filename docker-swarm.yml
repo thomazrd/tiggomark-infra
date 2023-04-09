@@ -6,7 +6,6 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     hostname: portainer-hostname
-    restart: unless-stopped
     ports:
       - target: 9000
         published: 9000
@@ -65,7 +64,7 @@ services:
 
 
   saas_connector:
-    image: tiggomark/saas-connector:1.0.1
+    image: tiggomark/saasconnector:latest
     hostname: saas-connector-hostname
     deploy:
       replicas: 1
@@ -126,7 +125,6 @@ services:
   nginx:
     image: nginx
     hostname: nginx_infra
-    restart: unless-stopped
     deploy:
       replicas: 1
       resources:
