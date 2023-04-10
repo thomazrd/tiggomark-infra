@@ -2,7 +2,6 @@ version: '3.7'
 
 services:
 
-
   portainer:
     image: portainer/portainer-ce:latest
     hostname: portainer-hostname
@@ -16,7 +15,6 @@ services:
       - portainer_data:/data
     networks:
       - tiggomark_network
-
 
 
   projects:
@@ -138,7 +136,6 @@ services:
     networks:
       - tiggomark_network
       - nginx_network
-
 
 
 volumes:
