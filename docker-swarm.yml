@@ -4,6 +4,7 @@ services:
 
 
   cluster_agent:
+    hostname: clusteragent-hostname
     image: tiggomark/clusteragent:latest
     deploy:
       replicas: 1
@@ -11,6 +12,13 @@ services:
         limits:
           cpus: '0.5'
           memory: '256M'
+
+    ports:
+      - target: 8089
+        published: 8089
+        protocol: tcp
+        mode: ingress
+
     environment:
       SPRING_PROFILES_ACTIVE: prod
       NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
