@@ -77,7 +77,7 @@ services:
       TIGGO_SAAS_CONNECTOR_APP_TOKEN: 'app-token'
       TIGGO_SAAS_CONNECTOR_APP_ID: 'app-token'
       TIGGO_DB_USER: 'root'
-      TIGGO_DB_PASSWORD: '123456789'
+      TIGGO_DB_PASSWORD: 123456789
       TIGGO_DB_PORT: '3306'
       TIGGO_DB_DATABASE: 'saasconnector'
       TIGGO_DEFAULT_TIMEZONE: 'Europe/Stockholm'
@@ -111,7 +111,7 @@ services:
       DB_PORT: '3306'
       DB_NAME: 'saasconnector'
       DB_USERNAME: 'root'
-      DB_PASSWORD: '123456789'
+      DB_PASSWORD: 123456789
     depends_on:
         - saas_connector_db
     networks:
@@ -135,8 +135,8 @@ services:
     environment:
       MYSQL_DATABASE: 'saasconnector'
       MYSQL_USER: 'admin'
-      MYSQL_PASSWORD: '123456789'
-      MYSQL_ROOT_PASSWORD: '123456789'
+      MYSQL_PASSWORD: 123456789
+      MYSQL_ROOT_PASSWORD: 123456789
     volumes:
       - saas_connector_db_data_cl:/var/lib/mysql
     ports:

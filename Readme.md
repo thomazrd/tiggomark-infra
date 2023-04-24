@@ -8,9 +8,12 @@ kubectl apply --context do-ams3-k8s-1-25-4-do-0-ams3-1678788205661 -f .
 
 Deploy da stack docker 
 
-docker stack deploy -c docker-swarm.yml tiggomark-cluster
+docker stack deploy -c docker-swarm.yml cluster
 
 
-kubectl port-forward service/saas-connector 8080:8080 &
+Ex de como fazer restore dos dados (Usar com muito cuidado):
+./restore_data.sh /home/tiggomark/Documents/volumes/db cluster_saas_connector_db_data_cl
 
-kubectl port-forward service/projects 8081:80 &
+Observe que é necessário colocar o profixo "cluster" por que o sawrm cria o volume automaticamente com esse nome
+
+
