@@ -193,11 +193,11 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: '156M'
+          memory: '256M'
 
     ports:
       - target: 80
-        published: 8080
+        published: 8087
         protocol: tcp
         mode: ingress
 
@@ -235,7 +235,7 @@ services:
 
     ports:
       - target: 8080
-        published: 8081
+        published: 8086
         protocol: tcp
         mode: ingress
 
