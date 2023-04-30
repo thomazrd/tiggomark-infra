@@ -184,7 +184,7 @@ services:
       ESPOCRM_DATABASE_PASSWORD: 123456789
       ESPOCRM_ADMIN_USERNAME: admin
       ESPOCRM_ADMIN_PASSWORD: password
-      ESPOCRM_SITE_URL: "http://localhost:8080"
+      ESPOCRM_SITE_URL: "http://tiggomarkcrm:80807"
     volumes:
       - tiggocrm_vol:/var/www/html
 
@@ -201,6 +201,10 @@ services:
         protocol: tcp
         mode: ingress
 
+    networks:
+      - tiggomark_network
+      - nginx_network
+
   tiggomarkcrm-daemon:
     image: tiggomark/crm:latest
     hostname: tiggomarkcrm-daemon
@@ -215,6 +219,10 @@ services:
 
     entrypoint: docker-daemon.sh
 
+    networks:
+      - tiggomark_network
+      - nginx_network
+
   tiggomarkcrm-websocket:
     image: tiggomark/crm:latest
     hostname: tiggomarkcrm-websocket
@@ -226,9 +234,9 @@ services:
           memory: '156M'
     environment:
       ESPOCRM_CONFIG_USE_WEB_SOCKET: "true"
-      ESPOCRM_CONFIG_WEB_SOCKET_URL: "ws://localhost:8081"
+      ESPOCRM_CONFIG_WEB_SOCKET_URL: "ws://tiggomarkcrm-websocket:8086"
       ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBSCRIBER_DSN: "tcp://*:7777"
-      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBMISSION_DSN: "tcp://espocrm-websocket:7777"
+      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBMISSION_DSN: "tcp://tiggomarkcrm-websocket:7777"
     volumes:
       - tiggocrm_vol:/var/www/html
     entrypoint: docker-websocket.sh
@@ -238,6 +246,10 @@ services:
         published: 8086
         protocol: tcp
         mode: ingress
+
+    networks:
+      - tiggomark_network
+      - nginx_network
 
 
 volumes:
