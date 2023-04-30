@@ -175,81 +175,6 @@ services:
       - tiggomark_network
       - nginx_network
 
-  tiggomarkcrm:
-    image: tiggomark/crm:latest
-    hostname: tiggomarkcrm
-    environment:
-      ESPOCRM_DATABASE_HOST: tiggomark_saas_connector_db
-      ESPOCRM_DATABASE_USER: root
-      ESPOCRM_DATABASE_PASSWORD: 123456789
-      ESPOCRM_ADMIN_USERNAME: admin
-      ESPOCRM_ADMIN_PASSWORD: password
-      ESPOCRM_SITE_URL: "http://tiggomarkcrm:8087"
-    volumes:
-      - tiggocrm_vol:/var/www/html
-
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '256M'
-
-    ports:
-      - target: 80
-        published: 8087
-        protocol: tcp
-        mode: ingress
-
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-  tiggomarkcrm-daemon:
-    image: tiggomark/crm:latest
-    hostname: tiggomarkcrm-daemon
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '156M'
-    volumes:
-      - tiggocrm_vol:/var/www/html
-
-    entrypoint: docker-daemon.sh
-
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-  tiggomarkcrm-websocket:
-    image: tiggomark/crm:latest
-    hostname: tiggomarkcrm-websocket
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '156M'
-    environment:
-      ESPOCRM_CONFIG_USE_WEB_SOCKET: "true"
-      ESPOCRM_CONFIG_WEB_SOCKET_URL: "ws://tiggomarkcrm-websocket:8086"
-      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBSCRIBER_DSN: "tcp://*:7777"
-      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBMISSION_DSN: "tcp://tiggomarkcrm-websocket:7777"
-    volumes:
-      - tiggocrm_vol:/var/www/html
-    entrypoint: docker-websocket.sh
-
-    ports:
-      - target: 8080
-        published: 8086
-        protocol: tcp
-        mode: ingress
-
-    networks:
-      - tiggomark_network
-      - nginx_network
 
 
 volumes:
@@ -259,7 +184,7 @@ volumes:
   projects_db_data_cl:
   saas_connector_db_data_cl:
   clickhouse_data:
-  tiggocrm_vol:
+
 
 
 networks:
