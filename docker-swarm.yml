@@ -184,7 +184,7 @@ services:
       ESPOCRM_DATABASE_PASSWORD: 123456789
       ESPOCRM_ADMIN_USERNAME: admin
       ESPOCRM_ADMIN_PASSWORD: password
-      ESPOCRM_SITE_URL: "http://tiggomarkcrm:80807"
+      ESPOCRM_SITE_URL: "http://tiggomarkcrm:8087"
     volumes:
       - tiggocrm_vol:/var/www/html
 
