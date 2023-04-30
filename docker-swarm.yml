@@ -179,7 +179,7 @@ services:
     image: tiggomark/crm:latest
     hostname: tiggomarkcrm
     environment:
-      ESPOCRM_DATABASE_HOST: mysql
+      ESPOCRM_DATABASE_HOST: tiggomark_saas_connector_db
       ESPOCRM_DATABASE_USER: root
       ESPOCRM_DATABASE_PASSWORD: 123456789
       ESPOCRM_ADMIN_USERNAME: admin
