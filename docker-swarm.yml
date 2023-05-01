@@ -30,9 +30,8 @@ services:
       DB_PASSWORD: '123456789'
 
     volumes:
-      - saas_connector_db_data_cl:/volumes/db
-      - projects_public_user-files:/volumes/projects_public_files
-      - projects_user-files:/var/www/html/projects_files
+      - /var/run/docker.sock:/var/run/docker.sock
+
     networks:
       - tiggomark_network
       - nginx_network
