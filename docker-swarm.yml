@@ -146,6 +146,8 @@ services:
         mode: ingress
     networks:
       - tiggomark_network
+      -
+    command: ["mysqld", "--innodb-force-recovery=1"]
 
   nginx:
     image: nginx
