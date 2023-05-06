@@ -189,7 +189,7 @@ services:
     container_name: espocrm-websocket
     environment:
       ESPOCRM_CONFIG_USE_WEB_SOCKET: "true"
-      ESPOCRM_CONFIG_WEB_SOCKET_URL: "ws://espocrm-websocket:8081"
+      ESPOCRM_CONFIG_WEB_SOCKET_URL: "ws://espocrm-websocket:8083"
       ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBSCRIBER_DSN: "tcp://*:7777"
       ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBMISSION_DSN: "tcp://espocrm-websocket:7777"
     volumes:
@@ -197,7 +197,7 @@ services:
     entrypoint: docker-websocket.sh
     ports:
       - target: 8080
-        published: 8081
+        published: 8083
         protocol: tcp
         mode: ingress
 
