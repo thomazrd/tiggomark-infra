@@ -131,7 +131,7 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: '1024M'
+          memory: '512M'
     environment:
       MYSQL_DATABASE: 'saasconnector'
       MYSQL_USER: 'admin'
@@ -176,6 +176,67 @@ services:
       - tiggomark_network
       - nginx_network
 
+  espocrm-daemon:
+    image: tiggomark/crm:latest
+    volumes:
+      - tiggocrm:/var/www/html
+
+    entrypoint: docker-daemon.sh
+
+  espocrm-websocket:
+    image: tiggomark/crm:latest
+    hostname: espocrm-websocket
+    container_name: espocrm-websocket
+    environment:
+      ESPOCRM_CONFIG_USE_WEB_SOCKET: "true"
+      ESPOCRM_CONFIG_WEB_SOCKET_URL: "ws://espocrm-websocket:8081"
+      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBSCRIBER_DSN: "tcp://*:7777"
+      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBMISSION_DSN: "tcp://espocrm-websocket:7777"
+    volumes:
+      - tiggocrm:/var/www/html
+    entrypoint: docker-websocket.sh
+    ports:
+      - target: 8080
+        published: 8081
+        protocol: tcp
+        mode: ingress
+
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  crm:
+    image: tiggomark/crm:latest
+    hostname: tiggo_crm
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '256M'
+    environment:
+      ESPOCRM_DATABASE_HOST: tiggomark_saas_connector_db
+      ESPOCRM_DATABASE_USER: root
+      ESPOCRM_DATABASE_NAME: DB_espocrm
+      ESPOCRM_DATABASE_PASSWORD: 123456789
+      ESPOCRM_ADMIN_USERNAME: admin
+      ESPOCRM_ADMIN_PASSWORD: password
+      ESPOCRM_SITE_URL: "https://crm.tiggomark.com.br"
+    volumes:
+      - tiggocrm:/var/www/html
+      - upload_files:/var/upload
+
+    ports:
+      - target: 80
+        published: 8082
+        protocol: tcp
+        mode: ingress
+
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+
 
 
 volumes:
@@ -185,6 +246,8 @@ volumes:
   projects_db_data_cl:
   saas_connector_db_data_cl:
   clickhouse_data:
+  tiggocrm:
+  upload_files:
 
 
 
