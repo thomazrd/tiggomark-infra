@@ -218,10 +218,10 @@ services:
           cpus: '0.5'
           memory: '256M'
     environment:
-      ESPOCRM_DATABASE_HOST: 'tiggomark_saas_connector_db'
-      ESPOCRM_DATABASE_USER: 'admin'
+      ESPOCRM_DATABASE_HOST: mysql
+      ESPOCRM_DATABASE_USER: root
       ESPOCRM_DATABASE_NAME: DB_espocrm
-      ESPOCRM_DATABASE_PASSWORD: 123456789
+      ESPOCRM_DATABASE_PASSWORD: root_password
       ESPOCRM_ADMIN_USERNAME: admin
       ESPOCRM_ADMIN_PASSWORD: password
       ESPOCRM_SITE_URL: "https://crm.tiggomark.com.br"
@@ -240,6 +240,21 @@ services:
       - nginx_network
 
 
+  mysql:
+    image: mysql:8
+    hostname: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: DB_espocrm
+      MYSQL_USER: espocrm
+      MYSQL_PASSWORD: database_password
+    volumes:
+      - mysqlcrm:/var/lib/mysql
+
+    networks:
+      - tiggomark_network
+      - nginx_network
 
 
 volumes:
