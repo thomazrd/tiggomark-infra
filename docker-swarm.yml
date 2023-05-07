@@ -218,6 +218,9 @@ services:
         limits:
           cpus: '0.5'
           memory: '256M'
+    networks:
+      - tiggomark_network
+      - nginx_network
     environment:
       ESPOCRM_DATABASE_HOST: 'tiggomark_saas_connector_db'
       ESPOCRM_DATABASE_USER: root
@@ -236,9 +239,6 @@ services:
         protocol: tcp
         mode: ingress
 
-    networks:
-      - tiggomark_network
-      - nginx_network
 
 
 
