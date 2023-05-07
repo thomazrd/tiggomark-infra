@@ -211,7 +211,7 @@ services:
 
   crm:
     image: tiggomark/crm:latest
-    hostname: tiggo_crm
+    hostname: tiggo-crm
     deploy:
       replicas: 1
       resources:
@@ -225,7 +225,7 @@ services:
       ESPOCRM_DATABASE_PASSWORD: 123456789
       ESPOCRM_ADMIN_USERNAME: admin
       ESPOCRM_ADMIN_PASSWORD: password
-      ESPOCRM_SITE_URL: "https://crm.tiggomark.com.br"
+      ESPOCRM_SITE_URL: "http://tiggo-crm:8082"
     volumes:
       - tiggocrm:/var/www/html
       - upload_files:/var/upload
