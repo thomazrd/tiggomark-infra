@@ -182,6 +182,9 @@ services:
       - tiggocrm:/var/www/html
 
     entrypoint: docker-daemon.sh
+    networks:
+      - tiggomark_network
+      - nginx_network
 
   espocrm-websocket:
     image: tiggomark/crm:latest
