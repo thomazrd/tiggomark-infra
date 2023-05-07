@@ -218,9 +218,9 @@ services:
           cpus: '0.5'
           memory: '256M'
     environment:
-      ESPOCRM_DATABASE_HOST: tiggomark_saas_connector_db
-      ESPOCRM_DATABASE_USER: root
-      ESPOCRM_DATABASE_NAME: DB_espocrm
+      ESPOCRM_DATABASE_HOST: 'tiggomark_saas_connector_db'
+      ESPOCRM_DATABASE_USER: 'root'
+      ESPOCRM_DATABASE_NAME: saasconnector
       ESPOCRM_DATABASE_PASSWORD: 123456789
       ESPOCRM_ADMIN_USERNAME: admin
       ESPOCRM_ADMIN_PASSWORD: password
