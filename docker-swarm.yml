@@ -162,6 +162,8 @@ services:
       - ./ssl/nginx.conf:/etc/nginx/nginx.conf
       - ./ssl/fullchain.pem:/etc/letsencrypt/live/tiggomark.com.br/fullchain.pem
       - ./ssl/privkey.pem:/etc/letsencrypt/live/tiggomark.com.br/privkey.pem
+      - ./ssl/projects/fullchain.pem:/etc/letsencrypt/live/projects.tiggomark.com.br/fullchain.pem
+      - ./ssl/projects/privkey.pem:/etc/letsencrypt/live/projects.tiggomark.com.br/privkey.pem
     ports:
       - target: 80
         published: 80
