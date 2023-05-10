@@ -164,6 +164,10 @@ services:
       - ./ssl/privkey.pem:/etc/letsencrypt/live/tiggomark.com.br/privkey.pem
       - ./ssl/projects/fullchain.pem:/etc/letsencrypt/live/projects.tiggomark.com.br/fullchain.pem
       - ./ssl/projects/privkey.pem:/etc/letsencrypt/live/projects.tiggomark.com.br/privkey.pem
+      - ./ssl/markee/fullchain.pem:/etc/letsencrypt/live/markee.tiggomark.com.br/fullchain.pem
+      - ./ssl/markee/privkey.pem:/etc/letsencrypt/live/markee.tiggomark.com.br/privkey.pem
+      - ./ssl/crm/fullchain.pem:/etc/letsencrypt/live/crm.tiggomark.com.br/fullchain.pem
+      - ./ssl/crm/privkey.pem:/etc/letsencrypt/live/crm.tiggomark.com.br/privkey.pem
     ports:
       - target: 80
         published: 80
