@@ -246,7 +246,32 @@ services:
         mode: ingress
 
 
+  intersaas:
+      image: tiggomark/intersaas:latest
+      hostname: intersaas
+      deploy:
+        replicas: 1
+        resources:
+          limits:
+            cpus: '0.5'
+            memory: '256M'
+      ports:
+        - target: 8080
+          published: 8084
+          protocol: tcp
+          mode: ingress
 
+      environment:
+        NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
+        DB_HOST: tiggomark_saas_connector_db
+        DB_USERNAME: root
+        DB_PASSWORD: 123456789
+        DB_PORT: 3306
+        DB_NAME: SAAS_INTEGRATOR_ROOT_DB
+
+      networks:
+        - tiggomark_network
+        - nginx_network
 
 
 
