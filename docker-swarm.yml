@@ -114,6 +114,9 @@ services:
       DB_PASSWORD: 123456789
     depends_on:
         - saas_connector_db
+
+    volumes:
+      - saas_connector_files:/var/uploadfiles
     networks:
       - tiggomark_network
       - nginx_network
@@ -285,6 +288,7 @@ volumes:
   clickhouse_data:
   tiggocrm:
   upload_files:
+  saas_connector_files:
 
 
 
