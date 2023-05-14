@@ -138,6 +138,7 @@ services:
           memory: '512M'
     environment:
       MYSQL_DATABASE: 'saasconnector'
+      MYSQL_INIT_CONNECT: "SET SESSION wait_timeout = 300;"
       MYSQL_USER: 'admin'
       MYSQL_PASSWORD: 123456789
       MYSQL_ROOT_PASSWORD: 123456789
