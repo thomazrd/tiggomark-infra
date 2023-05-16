@@ -21,8 +21,8 @@ services:
     entrypoint: docker/entrypoints/rails.sh
     command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
     networks:
-      - tiggomark_network
-      - nginx_network
+      - cluster_tiggomark_network
+      - cluster_nginx_network
 
 
   sidekiq:
@@ -36,8 +36,8 @@ services:
       - INSTALLATION_ENV=docker
     command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
     networks:
-      - tiggomark_network
-      - nginx_network
+      - cluster_tiggomark_network
+      - cluster_nginx_network
 
 
   postgres:
@@ -53,8 +53,8 @@ services:
       # Please provide your own password.
       - POSTGRES_PASSWORD=123456789
     networks:
-        - tiggomark_network
-        - nginx_network
+        - cluster_tiggomark_network
+        - cluster_nginx_network
 
 
   redis:
@@ -67,8 +67,8 @@ services:
     ports:
       - '127.0.0.1:6379:6379'
     networks:
-      - tiggomark_network
-      - nginx_network
+      - cluster_tiggomark_network
+      - cluster_nginx_network
 
 volumes:
   postgres_data:
