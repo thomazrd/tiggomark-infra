@@ -19,3 +19,9 @@ Ex de como fazer restore dos dados (Usar com muito cuidado):
 Observe que é necessário colocar o profixo "cluster" por que o sawrm cria o volume automaticamente com esse nome
 
 
+
+Como configurar o chatwoot:
+
+docker compose -f docker-swarm.yml run --rm rails bundle exec rails db:chatwoot_prepare
+
+
