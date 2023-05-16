@@ -172,8 +172,7 @@ services:
     volumes:
       - projects_public_user-files:/var/www/html/public/userfiles
       - projects_user-files:/var/www/html/userfiles
-    depends_on:
-        - projects_db
+
     networks:
       - tiggomark_network
       - nginx_network
