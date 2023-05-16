@@ -5,7 +5,7 @@ services:
 
   postgres:
     image: postgres:12
-    hostname: postgres-hostname
+    #hostname: postgres-hostname
     deploy:
       replicas: 1
     volumes:
