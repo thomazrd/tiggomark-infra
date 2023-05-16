@@ -9,7 +9,7 @@ services:
     deploy:
       replicas: 1
     volumes:
-      - /data/postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=chatwoot
       - POSTGRES_USER=postgres
@@ -367,6 +367,7 @@ services:
 
 
 volumes:
+  postgres_data:
   portainer_data:
   projects_user-files:
   projects_public_user-files:
