@@ -3,6 +3,92 @@ version: '3.7'
 services:
 
 
+  postgres:
+    image: postgres:12
+    hostname: postgres-hostname
+    deploy:
+      replicas: 1
+    volumes:
+      - /data/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=chatwoot
+      - POSTGRES_USER=postgres
+      # Please provide your own password.
+      - POSTGRES_PASSWORD=123456789
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  redis:
+    image: redis:alpine
+    hostname: redis-hostname
+    deploy:
+      replicas: 1
+    command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
+    env_file: .env
+    volumes:
+      - /data/redis:/data
+    ports:
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  base:
+    image: chatwoot/chatwoot:latest
+    env_file: .env ## Change this file for customized env variables
+    volumes:
+      - /data/storage:/app/storage
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  rails:
+    image: chatwoot/chatwoot:latest
+    hostname: rails-hostname
+    env_file: .env
+    deploy:
+      replicas: 1
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: ingress
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+    command: [ 'bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0' ]
+
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  sidekiq:
+    image: chatwoot/chatwoot:latest
+    env_file: .env
+    deploy:
+      replicas: 1
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+    command: [ 'bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml' ]
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+
+   ###################################################
+
   cluster_agent:
     hostname: clusteragent-hostname
     image: tiggomark/clusteragent:latest
