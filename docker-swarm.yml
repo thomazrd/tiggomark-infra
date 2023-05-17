@@ -179,7 +179,6 @@ services:
   mysql_db_5_7:
     image: mysql:5.7.41
     hostname: mysql_db_5_7
-    command: --wait_timeout=120 --innodb_buffer_pool_size=150M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC
     deploy:
       replicas: 1
       resources:
@@ -192,7 +191,7 @@ services:
       MYSQL_PASSWORD: 123456789
       MYSQL_ROOT_PASSWORD: 123456789
     volumes:
-      - mysql_db_5_7_data:/var/lib/mysql
+      - mysql_db_5_7_data_cl:/var/lib/mysql
     ports:
       - target: 3306
         published: 4501
@@ -428,7 +427,7 @@ volumes:
   crm_upload_files:
   saas_connector_files:
   redis_data:
-  mysql_db_5_7_data:
+  mysql_db_5_7_data_cl:
 
 
 
