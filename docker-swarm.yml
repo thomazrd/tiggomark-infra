@@ -1,9 +1,7 @@
 version: '3.7'
 
 services:
-
-
-  postgres:
+   postgres:
     image: postgres:12
     #hostname: postgres-hostname
     deploy:
@@ -180,7 +178,7 @@ services:
 
 
   markee:
-      image: tiggomark/saasconnector:latest
+      image: tiggomark/markee:latest
       hostname: markee-hostname
       deploy:
             replicas: 1
