@@ -63,6 +63,7 @@ services:
         protocol: tcp
         mode: ingress
     environment:
+      - FRONTEND_URL=http://chatplus.tiggomark.com.br
       - NODE_ENV=production
       - RAILS_ENV=production
       - REDIS_URL=redis://redis-hostname:6379
