@@ -179,7 +179,7 @@ services:
 
 
 
-   markee:
+  markee:
       image: tiggomark/saasconnector:latest
       hostname: markee-hostname
       deploy:
