@@ -30,7 +30,7 @@ services:
     command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
     env_file: .env
     volumes:
-      - redis_data:/data
+      - redis_data_cl:/data
     ports:
       - target: 6379
         published: 6379
@@ -426,7 +426,7 @@ volumes:
   tiggocrm:
   crm_upload_files:
   saas_connector_files:
-  redis_data:
+  redis_data_cl:
   mysql_db_5_7_dt:
 
 
