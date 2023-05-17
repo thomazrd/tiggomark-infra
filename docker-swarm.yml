@@ -199,22 +199,22 @@ services:
         mode: ingress
     networks:
       - tiggomark_network
-
+      - nginx_network
 
   markee:
       image: tiggomark/markee:latest
       hostname: markee-hostname
       deploy:
-            replicas: 1
-            resources:
-              limits:
-                cpus: '0.5'
-                memory: '512M'
+        replicas: 1
+        resources:
+          limits:
+            cpus: '0.5'
+            memory: '512M'
       ports:
-          - target: 80
-            published: 8086
-            protocol: tcp
-            mode: ingress
+        - target: 80
+          published: 8086
+          protocol: tcp
+          mode: ingress
 
       environment:
         MAUTIC_DB_HOST: mysql_db_5_7
@@ -224,8 +224,8 @@ services:
         MAUTIC_DB_NAME: DB_markee
 
       networks:
-            - tiggomark_network
-            - nginx_network
+        - tiggomark_network
+        - nginx_network
 
 
   saas_connector:
