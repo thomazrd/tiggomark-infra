@@ -191,7 +191,7 @@ services:
       MYSQL_PASSWORD: 123456789
       MYSQL_ROOT_PASSWORD: 123456789
     volumes:
-      - mysql_db_5_7_data_cl:/var/lib/mysql
+      - mysql_db_5_7_dt:/var/lib/mysql
     ports:
       - target: 3306
         published: 4501
@@ -427,7 +427,7 @@ volumes:
   crm_upload_files:
   saas_connector_files:
   redis_data:
-  mysql_db_5_7_data_cl:
+  mysql_db_5_7_dt:
 
 
 
