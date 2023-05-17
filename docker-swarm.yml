@@ -179,7 +179,7 @@ services:
   mysql_db_5_7:
     image: mysql:5.7.41
     hostname: mysql_db_5_7
-    command: --wait_timeout=120 --innodb_buffer_pool_size=150M --innodb_log_file_size=50M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC
+    command: --wait_timeout=120 --innodb_buffer_pool_size=150M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC
     deploy:
       replicas: 1
       resources:
