@@ -28,7 +28,6 @@ services:
     deploy:
       replicas: 1
     #command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
-    env_file: .env
     environment:
       - REDIS_PASSWORD=123456789
     volumes:
@@ -44,7 +43,6 @@ services:
 
   base:
     image: chatwoot/chatwoot:latest
-    env_file: .env ## Change this file for customized env variables
     volumes:
       - chatplus_data:/app/storage
     networks:
@@ -54,7 +52,6 @@ services:
   chatplus:
     image: chatwoot/chatwoot:latest
     hostname: chatplus-hostname
-    env_file: .env
     deploy:
       replicas: 1
     ports:
@@ -65,9 +62,32 @@ services:
     environment:
       - FRONTEND_URL=http://chatplus.tiggomark.com.br
       - NODE_ENV=production
+      - SECRET_KEY_BASE=secret
+      - FORCE_SSL=false
+      - DEFAULT_LOCALE=pt
       - RAILS_ENV=production
       - REDIS_URL=redis://redis-hostname:6379
       - INSTALLATION_ENV=docker
+      - FRONTEND_URL=http://chatplus.tiggomark.com.br
+      - HELPCENTER_URL=http://chatplus.tiggomark.com.br
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=123456789
+      - SMTP_DOMAIN=tiggoprojects@zohomail.com
+      - SMTP_ADDRESS=smtp.zoho.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=tiggoprojects@zohomail.com
+      - SMTP_PASSWORD=leghacy123
+      - SMTP_AUTHENTICATION=login
+      - SMTP_ENABLE_STARTTLS_AUTO=true
+      - SMTP_OPENSSL_VERIFY_MODE=peer
+      - SMTP_TLS=true
+      - ACTIVE_STORAGE_SERVICE=local
+      - FB_VERIFY_TOKEN=@Leghacy171296
+      - FB_APP_SECRET=9beb45b993cd43768941415fcef1fe69
+      - FB_APP_ID=1579473235907233
+      - NEW_RELIC_LICENSE_KEY='a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
+      - NEW_RELIC_APPLICATION_LOGGING_ENABLED=true
     command: [ 'bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0' ]
 
     networks:
@@ -76,7 +96,6 @@ services:
 
   sidekiq:
     image: chatwoot/chatwoot:latest
-    env_file: .env
     deploy:
       replicas: 1
     environment:
