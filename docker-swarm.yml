@@ -68,7 +68,6 @@ services:
       - RAILS_ENV=production
       - REDIS_URL=redis://redis-hostname:6379
       - INSTALLATION_ENV=docker
-      - FRONTEND_URL=http://chatplus.tiggomark.com.br
       - HELPCENTER_URL=http://chatplus.tiggomark.com.br
       - POSTGRES_HOST=postgres
       - POSTGRES_USERNAME=postgres
