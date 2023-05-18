@@ -51,9 +51,9 @@ services:
       - tiggomark_network
       - nginx_network
 
-  rails:
+  chatplus:
     image: chatwoot/chatwoot:latest
-    hostname: rails-hostname
+    hostname: chatplus-hostname
     env_file: .env
     deploy:
       replicas: 1
