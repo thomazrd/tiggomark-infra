@@ -42,7 +42,7 @@ services:
       - nginx_network
 
   base:
-    image: chatwoot/chatwoot:latest
+    image: tiggomark/chatplus:latest
     volumes:
       - chatplus_data:/app/storage
     networks:
