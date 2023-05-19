@@ -176,19 +176,19 @@ services:
           cpus: '0.5'
           memory: '256M'
     environment:
-      LEAN_SITENAME: 'Tiggomark'
-      LEAN_DEBUG: 0
-      LEAN_DB_HOST: 'tiggomark_saas_connector_db'
-      LEAN_SAAS_CONNECTOR_URL: 'http://saas-connector-hostname:8080'
-      LEAN_SAAS_CONNECTOR_APP_TOKEN: '3869c08a-306b-40ff-960c-221c2c9b04d9'
-      LEAN_SAAS_CONNECTOR_APP_ID: 'APP_E5722BC7FD884EC4A8D6ABFC76A62B17'
-      LEAN_DB_USER: 'root'
-      LEAN_DB_PASSWORD: 123456789
-      LEAN_DB_PORT: '3306'
-      LEAN_DB_DATABASE: 'saasconnector'
-      LEAN_DEFAULT_TIMEZONE: 'Europe/Stockholm'
-      LEAN_SESSION_PASSWORD: 'GD8Fozemg3AqM9my86TTfgTeGPXXkPF7'
-      LEAN_SESSION_EXPIRATION: 28800
+      TIGGO_SITENAME: 'Tiggomark'
+      TIGGO_DEBUG: 0
+      TIGGO_DB_HOST: 'tiggomark_saas_connector_db'
+      TIGGO_SAAS_CONNECTOR_URL: 'http://saas-connector-hostname:8080'
+      TIGGO_SAAS_CONNECTOR_APP_TOKEN: '3869c08a-306b-40ff-960c-221c2c9b04d9'
+      TIGGO_SAAS_CONNECTOR_APP_ID: 'APP_E5722BC7FD884EC4A8D6ABFC76A62B17'
+      TIGGO_DB_USER: 'root'
+      TIGGO_DB_PASSWORD: 123456789
+      TIGGO_DB_PORT: '3306'
+      TIGGO_DB_DATABASE: 'saasconnector'
+      TIGGO_DEFAULT_TIMEZONE: 'Europe/Stockholm'
+      TIGGO_SESSION_PASSWORD: 'GD8Fozemg3AqM9my86TTfgTeGPXXkPF7'
+      TIGGO_SESSION_EXPIRATION: 28800
     volumes:
       - projects_public_user-files:/var/www/html/public/userfiles
       - projects_user-files:/var/www/html/userfiles
