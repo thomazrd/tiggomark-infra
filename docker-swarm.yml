@@ -50,7 +50,7 @@ services:
       - nginx_network
 
   chatplus:
-    image: chatwoot/chatwoot:latest
+    image: tiggomark/chatplus:latest
     hostname: chatplus-hostname
     deploy:
       replicas: 1
@@ -180,8 +180,8 @@ services:
       TIGGO_DEBUG: 0
       TIGGO_DB_HOST: 'tiggomark_saas_connector_db'
       TIGGO_SAAS_CONNECTOR_URL: 'http://saas-connector-hostname:8080'
-      TIGGO_SAAS_CONNECTOR_APP_TOKEN: '3869c08a-306b-40ff-960c-221c2c9b04d9'
-      TIGGO_SAAS_CONNECTOR_APP_ID: 'APP_E5722BC7FD884EC4A8D6ABFC76A62B17'
+      TIGGO_SAAS_CONNECTOR_APP_TOKEN: '217dc0d4-a190-480e-b871-ebf2adec7055'
+      TIGGO_SAAS_CONNECTOR_APP_ID: 'APP_0286C4A3E1E94998BD79A1EEACA5903C'
       TIGGO_DB_USER: 'root'
       TIGGO_DB_PASSWORD: 123456789
       TIGGO_DB_PORT: '3306'
