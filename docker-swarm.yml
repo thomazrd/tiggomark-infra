@@ -1,6 +1,32 @@
 version: '3.7'
 
 services:
+
+    mysql_db_5_7:
+      image: mysql:5.7.41
+      hostname: mysql_db_5_7
+      deploy:
+        replicas: 1
+        resources:
+          limits:
+            cpus: '0.5'
+            memory: '300M'
+      environment:
+        MYSQL_DATABASE: DB_markee
+        MYSQL_USER: admin
+        MYSQL_PASSWORD: 123456789
+        MYSQL_ROOT_PASSWORD: 123456789
+      volumes:
+        - mysql_db_5_7_dt:/var/lib/mysql
+      ports:
+        - target: 3306
+          published: 4501
+          protocol: tcp
+          mode: ingress
+      networks:
+        - tiggomark_network
+        - nginx_network
+
   postgres:
     image: postgres:12
     #hostname: postgres-hostname
@@ -198,30 +224,7 @@ services:
       - nginx_network
 
 
-  mysql_db_5_7:
-    image: mysql:5.7.41
-    hostname: mysql_db_5_7
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '300M'
-    environment:
-      MYSQL_DATABASE: DB_markee
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: 123456789
-      MYSQL_ROOT_PASSWORD: 123456789
-    volumes:
-      - mysql_db_5_7_dt:/var/lib/mysql
-    ports:
-      - target: 3306
-        published: 4501
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-      - nginx_network
+
 
   markee:
       image: tiggomark/markee:latest
