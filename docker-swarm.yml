@@ -248,6 +248,9 @@ services:
         MAUTIC_DB_PORT: 3306
         MAUTIC_DB_NAME: DB_markee
 
+      volumes:
+        - markee_html_files:/var/www/html
+
       networks:
         - tiggomark_network
         - nginx_network
@@ -453,6 +456,7 @@ volumes:
   saas_connector_files:
   redis_data_cl:
   mysql_db_5_7_dt:
+  markee_html_files:
 
 
 
