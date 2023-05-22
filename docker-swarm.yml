@@ -48,14 +48,55 @@ services:
       - tiggomark_network
       - nginx_network
 
+  base: &base
+    image: tiggomark/chatplus:latest
+    env_file:
+        - chatplus.env
+    volumes:
+      - chatplus_data_storage:/app/storage
+
+  chatplus:
+    <<: *base
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+    entrypoint: docker/entrypoints/rails.sh
+    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
+    hostname: chatplus-hostname
+    deploy:
+      replicas: 1
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  sidekiq:
+    <<: *base
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+    command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+    networks:
+      - tiggomark_network
+      - nginx_network
+
   redis:
     image: redis:alpine
     hostname: redis-hostname
     deploy:
       replicas: 1
-    #command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
-    environment:
-      - REDIS_PASSWORD=123456789
+    command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
+    env_file:
+      - chatplus.env
     volumes:
       - redis_data_cl:/data
     ports:
@@ -67,88 +108,23 @@ services:
       - tiggomark_network
       - nginx_network
 
-  chatpluswebpack:
-    image: tiggomark/chatplus:latest
-    entrypoint: docker/entrypoints/webpack.sh
-    command: bin/webpack-dev-server
-    volumes:
-      - chatplus_data:/app/storage
-    volumes:
-      - ./:/app:delegated
-      - node_modules_chatplus:/app/node_modules # Node modules shared across containers
-      - packs_chatplus:/app/public/packs
-      - cache_chatplus:/app/tmp/cache
-      - bundle_chatplus:/usr/local/bundle
-
-    environment:
-      - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
-      - NODE_ENV=development
-      - RAILS_ENV=development
+  mailhog:
+    image: mailhog/mailhog
     ports:
-      - target: 3035
-        published: 3035
+      - target: 1025
+        published: 1025
+        protocol: tcp
+        mode: ingress
+      - target: 8025
+        published: 8025
         protocol: tcp
         mode: ingress
     networks:
-      - tiggomark_network
-      - nginx_network
+        - tiggomark_network
+        - nginx_network
 
-  chatplus:
-    image: tiggomark/chatplus:latest
-    hostname: chatplus-hostname
-    deploy:
-      replicas: 1
-    ports:
-      - target: 3000
-        published: 3000
-        protocol: tcp
-        mode: ingress
-    environment:
-      - FRONTEND_URL=http://chatplus.tiggomark.com.br
-      - NODE_ENV=production
-      - SECRET_KEY_BASE=secret
-      - FORCE_SSL=false
-      - DEFAULT_LOCALE=pt
-      - RAILS_ENV=production
-      - REDIS_URL=redis://redis-hostname:6379
-      - INSTALLATION_ENV=docker
-      - HELPCENTER_URL=http://chatplus.tiggomark.com.br
-      - POSTGRES_HOST=postgres
-      - POSTGRES_USERNAME=postgres
-      - POSTGRES_PASSWORD=123456789
-      - SMTP_DOMAIN=tiggoprojects@zohomail.com
-      - SMTP_ADDRESS=smtp.zoho.com
-      - SMTP_PORT=587
-      - SMTP_USERNAME=tiggoprojects@zohomail.com
-      - SMTP_PASSWORD=leghacy123
-      - SMTP_AUTHENTICATION=login
-      - SMTP_ENABLE_STARTTLS_AUTO=true
-      - SMTP_OPENSSL_VERIFY_MODE=peer
-      - SMTP_TLS=true
-      - ACTIVE_STORAGE_SERVICE=local
-      - FB_VERIFY_TOKEN=@Leghacy171296
-      - FB_APP_SECRET=9beb45b993cd43768941415fcef1fe69
-      - FB_APP_ID=1579473235907233
-      - NEW_RELIC_LICENSE_KEY='a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
-      - NEW_RELIC_APPLICATION_LOGGING_ENABLED=true
-    command: [ 'bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0' ]
 
-    networks:
-      - tiggomark_network
-      - nginx_network
 
-  sidekiq:
-    image: chatwoot/chatwoot:latest
-    deploy:
-      replicas: 1
-    environment:
-      - NODE_ENV=production
-      - RAILS_ENV=production
-      - INSTALLATION_ENV=docker
-    command: [ 'bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml' ]
-    networks:
-      - tiggomark_network
-      - nginx_network
 
 
    ###################################################
@@ -482,6 +458,7 @@ volumes:
   packs_chatplus:
   cache_chatplus:
   bundle_chatplus:
+  chatplus_data_storage:
 
 
 
