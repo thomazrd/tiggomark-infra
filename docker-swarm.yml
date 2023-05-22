@@ -48,7 +48,7 @@ services:
       - tiggomark_network
       - nginx_network
 
-  base: &base
+  chatplusbase: &chatplusbase
     image: tiggomark/chatplus:latest
     env_file:
         - chatplus.env
@@ -56,7 +56,7 @@ services:
       - chatplus_data_storage:/app/storage
 
   chatplus:
-    <<: *base
+    <<: *chatplusbase
     environment:
       - NODE_ENV=production
       - RAILS_ENV=production
@@ -75,11 +75,8 @@ services:
       - tiggomark_network
       - nginx_network
 
-  sidekiq:
-    <<: *base
-    depends_on:
-      - postgres
-      - redis
+  chatplus_sidekiq:
+    <<: *chatplusbase
     environment:
       - NODE_ENV=production
       - RAILS_ENV=production
@@ -436,28 +433,19 @@ services:
 
 
 
-
-
-
 volumes:
   postgres_data:
   chatplus_data:
   portainer_data:
   projects_user-files:
   projects_public_user-files:
-  projects_db_data_cl:
   saas_connector_db_data_cl:
-  clickhouse_data:
   tiggocrm:
   crm_upload_files:
   saas_connector_files:
   redis_data_cl:
   mysql_db_5_7_dt:
   markee_html_files:
-  node_modules_chatplus:
-  packs_chatplus:
-  cache_chatplus:
-  bundle_chatplus:
   chatplus_data_storage:
 
 
