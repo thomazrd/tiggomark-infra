@@ -67,10 +67,28 @@ services:
       - tiggomark_network
       - nginx_network
 
-  base:
+  chatpluswebpack:
     image: tiggomark/chatplus:latest
+    entrypoint: docker/entrypoints/webpack.sh
+    command: bin/webpack-dev-server
     volumes:
       - chatplus_data:/app/storage
+    volumes:
+      - ./:/app:delegated
+      - node_modules_chatplus:/app/node_modules # Node modules shared across containers
+      - packs_chatplus:/app/public/packs
+      - cache_chatplus:/app/tmp/cache
+      - bundle_chatplus:/usr/local/bundle
+
+    environment:
+      - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
+      - NODE_ENV=development
+      - RAILS_ENV=development
+    ports:
+      - target: 3035
+        published: 3035
+        protocol: tcp
+        mode: ingress
     networks:
       - tiggomark_network
       - nginx_network
@@ -442,6 +460,9 @@ services:
 
 
 
+
+
+
 volumes:
   postgres_data:
   chatplus_data:
@@ -457,6 +478,10 @@ volumes:
   redis_data_cl:
   mysql_db_5_7_dt:
   markee_html_files:
+  node_modules_chatplus:
+  packs_chatplus:
+  cache_chatplus:
+  bundle_chatplus:
 
 
 
