@@ -16,7 +16,7 @@ docker volume inspect $nome_volume > /dev/null 2>&1 || docker volume create $nom
 id_contenedor=$(docker run -d -v $nome_volume:/data alpine:latest)
 
 # Copia o arquivo para dentro do contêiner
-docker cp $caminho_arquivo/. $id_contenedor:/data
+docker cp -n $caminho_arquivo/. $id_contenedor:/data
 
 # Mostra a lista de arquivos copiados para o volume
 docker run --rm -v "$nome_volume":/data alpine:latest ls  /data
