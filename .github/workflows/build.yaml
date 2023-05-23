@@ -3,7 +3,7 @@ name: Update Cluster
 on:
   push:
     branches:
-      - main
+      - master
 
 env:
   INFRA_REPOSITORY: https://github.com/thomazrd/tiggomark-infra.git
