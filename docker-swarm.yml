@@ -282,7 +282,7 @@ services:
   saas_connector_db:
     image: mysql:8
     hostname: tiggomark_saas_connector_db
-    command: --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC
+    command: --innodb-force-recovery=1 --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC
     deploy:
       replicas: 1
       resources:
