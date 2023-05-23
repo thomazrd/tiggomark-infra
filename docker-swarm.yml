@@ -296,7 +296,7 @@ services:
       MYSQL_PASSWORD: 123456789
       MYSQL_ROOT_PASSWORD: 123456789
     volumes:
-      - saas_connector_db_data_cl:/var/lib/mysql
+      - saas_connector_db_data_cluster:/var/lib/mysql
     ports:
       - target: 3306
         published: 4500
@@ -438,7 +438,7 @@ volumes:
   portainer_data:
   projects_user-files:
   projects_public_user-files:
-  saas_connector_db_data_cl:
+  saas_connector_db_data_cluster:
   tiggocrm:
   crm_upload_files:
   saas_connector_files:
