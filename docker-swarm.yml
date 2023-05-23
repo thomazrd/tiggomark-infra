@@ -435,7 +435,6 @@ services:
 
 volumes:
   postgres_data:
-  chatplus_data:
   portainer_data:
   projects_user-files:
   projects_public_user-files:
