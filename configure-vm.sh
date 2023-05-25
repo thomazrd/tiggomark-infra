@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#Diretorio utilizado pelo cluster agent
+sudo mkdir /var/temp
+
+sudo chmod 777 -R /var/temp
+
+
 # Atualizar repositórios
 sudo apt update
 
@@ -33,6 +39,8 @@ docker --version
 
 # Verificar a versão do docker-compose instalado
 docker-compose --version
+
+sudo chmod 777 /var/run/docker.sock
 
 # Mostrar informações do Docker
 docker info
