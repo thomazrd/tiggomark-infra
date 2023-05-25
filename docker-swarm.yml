@@ -105,25 +105,6 @@ services:
       - tiggomark_network
       - nginx_network
 
-  mailhog:
-    image: mailhog/mailhog
-    ports:
-      - target: 1025
-        published: 1025
-        protocol: tcp
-        mode: ingress
-      - target: 8025
-        published: 8025
-        protocol: tcp
-        mode: ingress
-    networks:
-        - tiggomark_network
-        - nginx_network
-
-
-
-
-
    ###################################################
 
   cluster_agent:
