@@ -60,7 +60,10 @@ services:
       MB_DB_HOST: mysql
     command: sh -c "java -jar /app/metabase.jar migrate release-locks && java -jar /app/metabase.jar"
     ports:
-      - '3001:3000'
+      - target: 3000
+        published: 3001
+        protocol: tcp
+        mode: ingress
     networks:
       - tiggomark_network
 
