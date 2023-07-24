@@ -1,0 +1,65 @@
+version: '3.8'
+services:
+  rabbitmq-local:
+    image: rabbitmq:3.8.17-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq-local-data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+    networks:
+      - local-network
+
+  mysql-local:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: saasintegrator
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 123456789
+      MYSQL_ROOT_PASSWORD: 123456789
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-local-data:/var/lib/mysql
+    networks:
+      - local-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql-local
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: 123456789
+    ports:
+      - '7070:80'
+    networks:
+      - local-network
+
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    hostname: portainer-hostname
+    ports:
+      - target: 9000
+        published: 9000
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data-local:/data
+    networks:
+      - local-network
+
+networks:
+  local-network:
+
+volumes:
+  mysql-local-data:
+  rabbitmq-local-data:
+  portainer-data-local:

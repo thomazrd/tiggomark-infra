@@ -48,6 +48,22 @@ services:
       - tiggomark_network
       - nginx_network
 
+  reports:
+    hostname: reports
+    image: metabase/metabase:latest
+    environment:
+      MB_DB_TYPE: mysql
+      MB_DB_DBNAME: metabase
+      MB_DB_PORT: 3306
+      MB_DB_USER: root
+      MB_DB_PASS: 123456789
+      MB_DB_HOST: mysql
+    command: sh -c "java -jar /app/metabase.jar migrate release-locks && java -jar /app/metabase.jar"
+    ports:
+      - '3001:3000'
+    networks:
+      - tiggomark_network
+
   chatplusbase: &chatplusbase
     image: tiggomark/chatplus:latest
     env_file:
@@ -127,7 +143,7 @@ services:
       SPRING_PROFILES_ACTIVE: prod
       NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
       OTEL_EXPORTER_OTLP_ENDPOINT: 'http://otel-collector:4317'
-      DB_HOST: 'tiggomark_saas_connector_db'
+      DB_HOST: 'mysql_8'
       DB_PORT: '3306'
       DB_NAME: 'saasconnector'
       DB_USERNAME: 'root'
@@ -157,7 +173,6 @@ services:
       - tiggomark_network
 
 
-
   projects:
     image: tiggomark/projects:latest
     hostname: projects-hostname
@@ -176,7 +191,7 @@ services:
     environment:
       TIGGO_SITENAME: 'Tiggomark'
       TIGGO_DEBUG: 0
-      TIGGO_DB_HOST: 'tiggomark_saas_connector_db'
+      TIGGO_DB_HOST: 'mysql_8'
       TIGGO_SAAS_CONNECTOR_URL: 'http://saas-connector-hostname:8080'
       TIGGO_SAAS_CONNECTOR_APP_TOKEN: '217dc0d4-a190-480e-b871-ebf2adec7055'
       TIGGO_SAAS_CONNECTOR_APP_ID: 'APP_0286C4A3E1E94998BD79A1EEACA5903C'
@@ -194,8 +209,6 @@ services:
     networks:
       - tiggomark_network
       - nginx_network
-
-
 
 
   markee:
@@ -241,13 +254,13 @@ services:
       SPRING_PROFILES_ACTIVE: prod
       NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
       OTEL_EXPORTER_OTLP_ENDPOINT: 'http://otel-collector:4317'
-      DB_HOST: 'tiggomark_saas_connector_db'
+      DB_HOST: 'mysql_8'
       DB_PORT: '3306'
       DB_NAME: 'saasconnector'
       DB_USERNAME: 'root'
       DB_PASSWORD: 123456789
     depends_on:
-        - saas_connector_db
+        - mysql_8
 
     volumes:
       - saas_connector_files:/var/uploadfiles
@@ -260,9 +273,9 @@ services:
         protocol: tcp
         mode: ingress
 
-  saas_connector_db:
+  mysql_8:
     image: mysql:8
-    hostname: tiggomark_saas_connector_db
+    hostname: mysql_8
     command: --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC
     deploy:
       replicas: 1
@@ -277,7 +290,7 @@ services:
       MYSQL_PASSWORD: 123456789
       MYSQL_ROOT_PASSWORD: 123456789
     volumes:
-      - saas_connector_db_data_cluster:/var/lib/mysql
+      - mysql_8_data:/var/lib/mysql
     ports:
       - target: 3306
         published: 4500
@@ -286,6 +299,20 @@ services:
     networks:
       - tiggomark_network
 
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:3.8.17-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+    networks:
+      - tiggomark_network
 
   nginx:
     image: nginx
@@ -366,7 +393,7 @@ services:
       - tiggomark_network
       - nginx_network
     environment:
-      ESPOCRM_DATABASE_HOST: 'tiggomark_saas_connector_db'
+      ESPOCRM_DATABASE_HOST: 'mysql_8'
       ESPOCRM_DATABASE_USER: root
       ESPOCRM_DATABASE_NAME: DB_CRM_tiggomark
       ESPOCRM_DATABASE_PASSWORD: 123456789
@@ -402,24 +429,37 @@ services:
       environment:
         #NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
         SPRING_PROFILES_ACTIVE: prod
-        DB_HOST: tiggomark_saas_connector_db
+        DB_HOST: mysql_8
         DB_USERNAME: root
         DB_PASSWORD: 123456789
         DB_PORT: 3306
         DB_NAME: SAAS_INTEGRATOR_ROOT_DB
+        RABBIT_MQ_HOST: rabbitmq
 
       networks:
         - tiggomark_network
         - nginx_network
 
-
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: 123456789
+    ports:
+      - '7070:80'
+    networks:
+      - tiggomark_network
 
 volumes:
   postgres_data:
+  rabbitmq-data:
   portainer_data:
   projects_user-files:
   projects_public_user-files:
-  saas_connector_db_data_cluster:
+  mysql_8_data:
   tiggocrm:
   crm_upload_files:
   saas_connector_files:
