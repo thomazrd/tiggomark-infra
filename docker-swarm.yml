@@ -66,6 +66,7 @@ services:
         mode: ingress
     networks:
       - tiggomark_network
+      - nginx_network
 
   chatplusbase: &chatplusbase
     image: tiggomark/chatplus:latest
