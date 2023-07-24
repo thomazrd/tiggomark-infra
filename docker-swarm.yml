@@ -49,7 +49,7 @@ services:
       - nginx_network
 
   reports:
-    hostname: reports
+    hostname: reports-hostname
     image: metabase/metabase:latest
     environment:
       MB_DB_TYPE: mysql
