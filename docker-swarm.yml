@@ -57,7 +57,7 @@ services:
       MB_DB_PORT: 3306
       MB_DB_USER: root
       MB_DB_PASS: 123456789
-      MB_DB_HOST: mysql
+      MB_DB_HOST: mysql_8
     command: sh -c "java -jar /app/metabase.jar migrate release-locks && java -jar /app/metabase.jar"
     ports:
       - target: 3000
@@ -448,7 +448,7 @@ services:
     image: phpmyadmin/phpmyadmin
     restart: always
     environment:
-      PMA_HOST: mysql
+      PMA_HOST: mysql_8
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: 123456789
