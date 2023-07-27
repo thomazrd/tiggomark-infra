@@ -266,7 +266,7 @@ services:
       - tiggomark_network
       - nginx_network
     ports:
-      - target: 8080
+      - target: 8089
         published: 8085
         protocol: tcp
         mode: ingress
