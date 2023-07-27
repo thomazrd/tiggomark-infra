@@ -396,7 +396,7 @@ services:
       ESPOCRM_DATABASE_NAME: DB_CRM_tiggomark
       ESPOCRM_DATABASE_PASSWORD: 123456789
       ESPOCRM_ADMIN_USERNAME: admin
-      ESPOCRM_ADMIN_PASSWORD: @Leghacy171296
+      ESPOCRM_ADMIN_PASSWORD: leghacy123
       ESPOCRM_SITE_URL: "http://tiggo-crm:8082"
     volumes:
       - tiggocrm:/var/www/html
