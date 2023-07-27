@@ -254,15 +254,9 @@ services:
         limits:
           cpus: '0.5'
           memory: '512M'
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
-      OTEL_EXPORTER_OTLP_ENDPOINT: 'http://otel-collector:4317'
-      DB_HOST: 'mysql_8'
-      DB_PORT: '3306'
-      DB_NAME: 'saasconnector'
-      DB_USERNAME: 'root'
-      DB_PASSWORD: 123456789
+    env_file:
+      - common.env
+      - saas-connector.env
     depends_on:
         - mysql_8
 
@@ -402,7 +396,7 @@ services:
       ESPOCRM_DATABASE_NAME: DB_CRM_tiggomark
       ESPOCRM_DATABASE_PASSWORD: 123456789
       ESPOCRM_ADMIN_USERNAME: admin
-      ESPOCRM_ADMIN_PASSWORD: password
+      ESPOCRM_ADMIN_PASSWORD: @Leghacy171296
       ESPOCRM_SITE_URL: "http://tiggo-crm:8082"
     volumes:
       - tiggocrm:/var/www/html
@@ -429,7 +423,9 @@ services:
           published: 8084
           protocol: tcp
           mode: ingress
-
+      env_file:
+        - common.env
+        - intersaas.env
       environment:
         #NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
         SPRING_PROFILES_ACTIVE: prod
