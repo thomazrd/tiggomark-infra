@@ -304,7 +304,7 @@ services:
       - 5672:5672
       - 15672:15672
     volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
+      - rabbitmq-data-prod:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
@@ -468,7 +468,7 @@ services:
 
 volumes:
   postgres_data:
-  rabbitmq-data:
+  rabbitmq-data-prod:
   portainer_data:
   projects_user-files:
   projects_public_user-files:
