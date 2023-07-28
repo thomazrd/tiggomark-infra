@@ -444,6 +444,19 @@ services:
     image: phpmyadmin/phpmyadmin
     restart: always
     environment:
+      PMA_HOST: mysql_db_5_7
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: 123456789
+    ports:
+      - '7071:80'
+    networks:
+      - tiggomark_network
+
+  phpmyadmin2:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
       PMA_HOST: mysql_8
       PMA_PORT: 3306
       PMA_USER: root
