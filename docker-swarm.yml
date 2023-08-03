@@ -125,6 +125,71 @@ services:
       - tiggomark_network
       - nginx_network
 
+  whatsapp_api:
+    container_name: whatsapp_api
+    hostname: whatsapp_api
+    image: tiggomark/whatsapp_api:latest
+    #restart: always
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - whatsapp_api_instances:/evolution/instances
+      - whatsapp_api_store:/evolution/store
+    networks:
+      - tiggomark_network
+      - nginx_network
+    env_file:
+      - .env-whatsapp_api
+    command: [ 'node', './dist/src/main.js' ]
+    expose:
+      - 8080
+
+  mongodb:
+    container_name: mongodb
+    hostname: mongodb
+    image: mongo
+    ports:
+      - target: 27017
+        published: 27017
+        protocol: tcp
+        mode: ingress
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_configdb:/data/configdb
+    networks:
+      - tiggomark_network
+      - nginx_network
+    expose:
+      - 27017
+
+  mongo-express:
+    image: mongo-express
+    hostname: mongo-express
+    networks:
+      - tiggomark_network
+      - nginx_network
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: root
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+    ports:
+      - target: 8081
+        published: 8081
+        protocol: tcp
+        mode: ingress
+    links:
+      - mongodb
+
    ###################################################
 
   cluster_agent:
@@ -480,7 +545,10 @@ volumes:
   mysql_db_5_7_dt:
   markee_html_files:
   chatplus_data_storage:
-
+  whatsapp_api_instances:
+  whatsapp_api_store:
+  mongodb_data:
+  mongodb_configdb:
 
 
 networks:
