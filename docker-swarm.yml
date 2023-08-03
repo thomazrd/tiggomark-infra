@@ -142,7 +142,7 @@ services:
       - tiggomark_network
       - nginx_network
     env_file:
-      - .env-whatsapp_api
+      - .env-whatsapp-api
     command: [ 'node', './dist/src/main.js' ]
     expose:
       - 8080
