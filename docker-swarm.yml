@@ -184,7 +184,7 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: root
     ports:
       - target: 8081
-        published: 8081
+        published: 8087
         protocol: tcp
         mode: ingress
     links:
