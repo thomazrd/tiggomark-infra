@@ -126,10 +126,9 @@ services:
       - nginx_network
 
   whatsapp_api:
-    container_name: whatsapp_api
     hostname: whatsapp_api
     image: tiggomark/whatsapp_api:latest
-    #restart: always
+    restart: always
     ports:
       - target: 8080
         published: 8080
