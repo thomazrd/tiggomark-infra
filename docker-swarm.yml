@@ -127,11 +127,12 @@ services:
 
   redis_whatsapp_api:
     image: redis:alpine
+    hostname: rediswhatsapp
     command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
     env_file:
       - .env-whatsapp-api
     volumes:
-      - redis_data_cl_4:/data
+      - redis_data_whatsapp_api:/data
     ports:
       - target: 6379
         published: 6375
@@ -557,6 +558,7 @@ volumes:
   crm_upload_files:
   saas_connector_files:
   redis_data_cl:
+  redis_data_whatsapp_api:
   mysql_db_5_7_dt:
   markee_html_files:
   chatplus_data_storage:
