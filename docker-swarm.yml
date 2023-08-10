@@ -125,6 +125,22 @@ services:
       - tiggomark_network
       - nginx_network
 
+  redis_whatsapp_api:
+    image: redis:alpine
+    command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
+    env_file:
+      - .env-whatsapp-api
+    volumes:
+      - redis_data_cl_4:/data
+    ports:
+      - target: 6379
+        published: 6375
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
   whatsapp_api:
     hostname: whatsapp_api
     image: tiggomark/whatsapp_api:latest
