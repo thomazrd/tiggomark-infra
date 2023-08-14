@@ -368,7 +368,6 @@ services:
       MYSQL_USER: 'admin'
       MYSQL_PASSWORD: 123456789
       MYSQL_ROOT_PASSWORD: 123456789
-    command: ["bash", "-c", "mysqlcheck --all-databases --check --auto-repair --user=root --password=$MYSQL_ROOT_PASSWORD"]
     volumes:
       - mysql_8_data:/var/lib/mysql
     ports:
@@ -376,6 +375,12 @@ services:
         published: 4500
         protocol: tcp
         mode: ingress
+    networks:
+      - tiggomark_network
+
+  mysql-client:
+    image: mysql:8.1.0
+    command: [ "mysqlcheck","--host=mysql_8", "--all-databases", "--check", "--auto-repair", "--user=root", "--password=123456789" ]
     networks:
       - tiggomark_network
 
