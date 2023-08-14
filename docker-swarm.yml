@@ -378,11 +378,14 @@ services:
     networks:
       - tiggomark_network
 
-  mysql-client:
-    image: mysql:8.1.0
-    command: [ "mysqlcheck","--host=mysql_8", "--all-databases", "--check", "--auto-repair", "--user=root", "--password=123456789" ]
+  mysql_check:
+    image: mysql:8
+    command: [ "bash", "-c", "mysqlcheck --host=mysql_8 --all-databases --check --auto-repair --user=root --password=$MYSQL_ROOT_PASSWORD" ]
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456789
     networks:
       - tiggomark_network
+
 
   rabbitmq:
     hostname: rabbitmq
