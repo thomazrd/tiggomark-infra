@@ -387,7 +387,7 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: '256M'
+          memory: '400M'
     environment:
       MYSQL_DATABASE: 'DB_CRM_2d092597_6d9b_4263_8a9f_0fda9c2451a2'
       #MYSQL_INIT_CONNECT: "SET SESSION wait_timeout = 300;"
@@ -395,7 +395,7 @@ services:
       MYSQL_PASSWORD: 123456789
       MYSQL_ROOT_PASSWORD: 123456789
     volumes:
-      - db_crm_data:/var/lib/mysql
+      - db_crm_data_cluster1:/var/lib/mysql
     ports:
       - target: 3306
         published: 4502
