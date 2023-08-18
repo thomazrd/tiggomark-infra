@@ -378,11 +378,42 @@ services:
     networks:
       - tiggomark_network
 
-  mysql_check:
+  db_crm:
     image: mysql:8
-    command: [ "bash", "-c", "mysqlcheck --host=mysql_8 --all-databases --check --auto-repair --user=root --password=$MYSQL_ROOT_PASSWORD" ]
+    hostname: db_crm
+    #command: --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC --innodb-force-recovery=1
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '256M'
     environment:
+      MYSQL_DATABASE: 'DB_CRM_2d092597_6d9b_4263_8a9f_0fda9c2451a2'
+      #MYSQL_INIT_CONNECT: "SET SESSION wait_timeout = 300;"
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: 123456789
       MYSQL_ROOT_PASSWORD: 123456789
+    volumes:
+      - db_crm_data:/var/lib/mysql
+    ports:
+      - target: 3306
+        published: 4501
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+
+  phpmyadmin_crm:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db_crm
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: 123456789
+    ports:
+      - '7072:80'
     networks:
       - tiggomark_network
 
@@ -575,6 +606,7 @@ volumes:
   whatsapp_api_store:
   mongodb_data:
   mongodb_configdb:
+  db_crm_data:
 
 
 networks:
