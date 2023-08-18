@@ -512,9 +512,9 @@ services:
       - tiggomark_network
       - nginx_network
     environment:
-      ESPOCRM_DATABASE_HOST: 'mysql_8'
+      ESPOCRM_DATABASE_HOST: 'db_crm'
       ESPOCRM_DATABASE_USER: root
-      ESPOCRM_DATABASE_NAME: DB_CRM_tiggomark
+      ESPOCRM_DATABASE_NAME: DB_CRM_2d092597_6d9b_4263_8a9f_0fda9c2451a2
       ESPOCRM_DATABASE_PASSWORD: 123456789
       ESPOCRM_ADMIN_USERNAME: admin
       ESPOCRM_ADMIN_PASSWORD: leghacy123
