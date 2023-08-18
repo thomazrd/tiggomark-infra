@@ -606,7 +606,7 @@ volumes:
   whatsapp_api_store:
   mongodb_data:
   mongodb_configdb:
-  db_crm_data:
+  db_crm_data_cluster1:
 
 
 networks:
