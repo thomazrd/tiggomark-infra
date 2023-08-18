@@ -151,6 +151,12 @@ services:
         published: 8080
         protocol: tcp
         mode: ingress
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1024M'
     volumes:
       - whatsapp_api_instances:/evolution/instances
       - whatsapp_api_store:/evolution/store
