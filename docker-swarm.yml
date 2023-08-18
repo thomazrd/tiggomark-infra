@@ -398,7 +398,7 @@ services:
       - db_crm_data:/var/lib/mysql
     ports:
       - target: 3306
-        published: 4501
+        published: 4502
         protocol: tcp
         mode: ingress
     networks:
