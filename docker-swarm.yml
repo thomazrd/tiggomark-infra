@@ -215,7 +215,7 @@ services:
       # Configura o Evolution para autenticar como API Key
       - AUTHENTICATION_TYPE=apikey
       # Define a API Key Global
-      - AUTHENTICATION_API_KEY=123456789 # ALTERE SUA APIKEY
+      - AUTHENTICATION_API_KEY=Y6D711FCDE4D4FD5936D44120E7139G6 # ALTERE SUA APIKEY
       # Define se a apikey será exibida quando for listar instâncias
       - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
       # Configura quantos qrcode serão gerados
