@@ -131,6 +131,12 @@ services:
     command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
     env_file:
       - .env-whatsapp-api
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1024M'
     volumes:
       - redis_data_whatsapp_api:/data
     ports:
