@@ -174,7 +174,7 @@ services:
       # Configurações Gerais
       # *****************************************************************************************
       # Configura o Evolution para ler as variáveis de ambiente
-      - SERVER_URL=https://whatsapp.tiggomark.com.br
+      - SERVER_URL=http://whatsapp_api:8080
       - DOCKER_ENV=true
       # Configura o Nível de Log
       - LOG_LEVEL=ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS
