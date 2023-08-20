@@ -731,6 +731,12 @@ volumes:
   mongodb_data:
   mongodb_configdb:
   db_crm_data_cluster1:
+  api_evolution_instances:
+    external: true
+    name: api_evolution_instances
+  api_evolution_store:
+    external: true
+    name: api_evolution_store
 
 
 networks:
