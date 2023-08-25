@@ -151,7 +151,7 @@ services:
     # Definição do Nome do Serviço
   whatsapp_api:
     # imagem do Evolution
-    image: davidsongomes/evolution-api:latest
+    image: tiggomark/evolution-api:latest
     # Nome do containner
     hostname: whatsapp_api
     # comando padrão para subir o servidor web
@@ -182,7 +182,7 @@ services:
       # caso não queria remover instâncias sem conexão, deixe como false
       - DEL_INSTANCE=false
       # Configura o dispositivo
-      - CONFIG_SESSION_PHONE_CLIENT=Evolution
+      - CONFIG_SESSION_PHONE_CLIENT=WhatsAppAPI
       - CONFIG_SESSION_PHONE_NAME=Chrome
       # *****************************************************************************************
       # Configura o Webhook
