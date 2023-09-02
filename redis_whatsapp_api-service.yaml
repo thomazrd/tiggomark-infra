@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.30.0 (9d8dcb518)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: redis-whatsapp-api
+  name: redis_whatsapp_api
+  namespace: default
+spec:
+  ports:
+    - name: "6375"
+      port: 6375
+      targetPort: 6379
+  selector:
+    io.kompose.service: redis-whatsapp-api
+status:
+  loadBalancer: {}

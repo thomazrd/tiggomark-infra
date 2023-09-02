@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.30.0 (9d8dcb518)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: espocrm-websocket
+  name: espocrm-websocket
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: espocrm-websocket
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.30.0 (9d8dcb518)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/tiggomark-infra-nginx-network: "true"
+        io.kompose.network/tiggomark-infra-tiggomark-network: "true"
+        io.kompose.service: espocrm-websocket
+    spec:
+      containers:
+        - command:
+            - docker-websocket.sh
+          env:
+            - name: ESPOCRM_CONFIG_USE_WEB_SOCKET
+              value: "true"
+            - name: ESPOCRM_CONFIG_WEB_SOCKET_URL
+              value: ws://espocrm-websocket:8083
+            - name: ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBMISSION_DSN
+              value: tcp://espocrm-websocket:7777
+            - name: ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBSCRIBER_DSN
+              value: tcp://*:7777
+          image: tiggomark/crm:latest
+          name: espocrm-websocket
+          ports:
+            - containerPort: 8080
+              hostPort: 8083
+              protocol: TCP
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/www/html
+              name: tiggocrm
+      hostname: espocrm-websocket
+      restartPolicy: Always
+      volumes:
+        - name: tiggocrm
+          persistentVolumeClaim:
+            claimName: tiggocrm
+status: {}

@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.30.0 (9d8dcb518)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: projects
+  name: projects
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: projects
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.30.0 (9d8dcb518)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/tiggomark-infra-nginx-network: "true"
+        io.kompose.network/tiggomark-infra-tiggomark-network: "true"
+        io.kompose.service: projects
+    spec:
+      containers:
+        - env:
+            - name: TIGGO_DB_DATABASE
+              value: saasconnector
+            - name: TIGGO_DB_HOST
+              value: mysql_8
+            - name: TIGGO_DB_PASSWORD
+              value: "123456789"
+            - name: TIGGO_DB_PORT
+              value: "3306"
+            - name: TIGGO_DB_USER
+              value: root
+            - name: TIGGO_DEBUG
+              value: "0"
+            - name: TIGGO_DEFAULT_TIMEZONE
+              value: Europe/Stockholm
+            - name: TIGGO_SAAS_CONNECTOR_APP_ID
+              value: APP_0286C4A3E1E94998BD79A1EEACA5903C
+            - name: TIGGO_SAAS_CONNECTOR_APP_TOKEN
+              value: 217dc0d4-a190-480e-b871-ebf2adec7055
+            - name: TIGGO_SAAS_CONNECTOR_URL
+              value: http://saas-connector-hostname:8080
+            - name: TIGGO_SESSION_EXPIRATION
+              value: "28800"
+            - name: TIGGO_SESSION_PASSWORD
+              value: GD8Fozemg3AqM9my86TTfgTeGPXXkPF7
+            - name: TIGGO_SITENAME
+              value: Tiggomark
+          image: tiggomark/projects:latest
+          name: projects
+          ports:
+            - containerPort: 80
+              hostPort: 8081
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: "268435456"
+          volumeMounts:
+            - mountPath: /var/www/html/public/userfiles
+              name: projects-public-user-files
+            - mountPath: /var/www/html/userfiles
+              name: projects-user-files
+      hostname: projects-hostname
+      restartPolicy: Always
+      volumes:
+        - name: projects-public-user-files
+          persistentVolumeClaim:
+            claimName: projects-public-user-files
+        - name: projects-user-files
+          persistentVolumeClaim:
+            claimName: projects-user-files
+status: {}

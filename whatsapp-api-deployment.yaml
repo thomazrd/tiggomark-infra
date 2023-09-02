@@ -1,0 +1,147 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.30.0 (9d8dcb518)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: whatsapp-api
+  name: whatsapp-api
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: whatsapp-api
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.30.0 (9d8dcb518)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/tiggomark-infra-nginx-network: "true"
+        io.kompose.network/tiggomark-infra-tiggomark-network: "true"
+        io.kompose.service: whatsapp-api
+    spec:
+      containers:
+        - args:
+            - node
+            - ./dist/src/main.js
+          env:
+            - name: AUTHENTICATION_API_KEY
+              value: Y6D711FCDE4D4FD5936D44120E7139G6
+            - name: AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES
+              value: "true"
+            - name: AUTHENTICATION_TYPE
+              value: apikey
+            - name: CLEAN_STORE_CHATS
+              value: "true"
+            - name: CLEAN_STORE_CLEANING_INTERVAL
+              value: "7200"
+            - name: CLEAN_STORE_CONTACTS
+              value: "true"
+            - name: CLEAN_STORE_MESSAGES
+              value: "true"
+            - name: CLEAN_STORE_MESSAGE_UP
+              value: "true"
+            - name: CONFIG_SESSION_PHONE_CLIENT
+              value: WhatsAppAPI
+            - name: CONFIG_SESSION_PHONE_NAME
+              value: Chrome
+            - name: CORS_CREDENTIALS
+              value: "true"
+            - name: CORS_METHODS
+              value: PATCH,OPTIONS,POST,GET,PUT,DELETE
+            - name: CORS_ORIGIN
+              value: https://powchat-app.tiggomark.com.br,localhost,*
+            - name: DEL_INSTANCE
+              value: "false"
+            - name: DOCKER_ENV
+              value: "true"
+            - name: LOG_LEVEL
+              value: ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS
+            - name: QRCODE_LIMIT
+              value: "3000"
+            - name: REDIS_ENABLED
+              value: "true"
+            - name: REDIS_URI
+              value: redis://redis_whatsapp_api:6379
+            - name: SERVER_URL
+              value: http://whatsapp_api:8080
+            - name: STORE_CHATS
+              value: "true"
+            - name: STORE_CONTACTS
+              value: "true"
+            - name: STORE_MESSAGES
+              value: "true"
+            - name: STORE_MESSAGE_UP
+              value: "true"
+            - name: WEBHOOK_EVENTS_APPLICATION_STARTUP
+              value: "false"
+            - name: WEBHOOK_EVENTS_CHATS_DELETE
+              value: "true"
+            - name: WEBHOOK_EVENTS_CHATS_SET
+              value: "true"
+            - name: WEBHOOK_EVENTS_CHATS_UPDATE
+              value: "true"
+            - name: WEBHOOK_EVENTS_CHATS_UPSERT
+              value: "true"
+            - name: WEBHOOK_EVENTS_CONNECTION_UPDATE
+              value: "true"
+            - name: WEBHOOK_EVENTS_CONTACTS_SET
+              value: "true"
+            - name: WEBHOOK_EVENTS_CONTACTS_UPDATE
+              value: "true"
+            - name: WEBHOOK_EVENTS_CONTACTS_UPSERT
+              value: "true"
+            - name: WEBHOOK_EVENTS_GROUPS_UPDATE
+              value: "true"
+            - name: WEBHOOK_EVENTS_GROUPS_UPSERT
+              value: "true"
+            - name: WEBHOOK_EVENTS_GROUP_PARTICIPANTS_UPDATE
+              value: "true"
+            - name: WEBHOOK_EVENTS_MESSAGES_SET
+              value: "false"
+            - name: WEBHOOK_EVENTS_MESSAGES_UPDATE
+              value: "true"
+            - name: WEBHOOK_EVENTS_MESSAGES_UPSERT
+              value: "true"
+            - name: WEBHOOK_EVENTS_PRESENCE_UPDATE
+              value: "true"
+            - name: WEBHOOK_EVENTS_QRCODE_UPDATED
+              value: "true"
+            - name: WEBHOOK_GLOBAL_ENABLED
+              value: "false"
+            - name: WEBHOOK_GLOBAL_URL
+              value: https://URL
+            - name: WEBHOOK_GLOBAL_WEBHOOK_BY_EVENTS
+              value: "false"
+          image: tiggomark/evolution-api:latest
+          name: whatsapp-api
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1073741824"
+          volumeMounts:
+            - mountPath: /evolution/instances
+              name: api-evolution-instances
+            - mountPath: /evolution/store
+              name: api-evolution-store
+      hostname: whatsapp_api
+      restartPolicy: Always
+      volumes:
+        - name: api-evolution-instances
+          persistentVolumeClaim:
+            claimName: api-evolution-instances
+        - name: api-evolution-store
+          persistentVolumeClaim:
+            claimName: api-evolution-store
+status: {}

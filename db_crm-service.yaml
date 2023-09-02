@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.30.0 (9d8dcb518)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: db-crm
+  name: db_crm
+  namespace: default
+spec:
+  ports:
+    - name: "4502"
+      port: 4502
+      targetPort: 3306
+  selector:
+    io.kompose.service: db-crm
+status:
+  loadBalancer: {}

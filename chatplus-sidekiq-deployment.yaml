@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.30.0 (9d8dcb518)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: chatplus-sidekiq
+  name: chatplus-sidekiq
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: chatplus-sidekiq
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.30.0 (9d8dcb518)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/tiggomark-infra-nginx-network: "true"
+        io.kompose.network/tiggomark-infra-tiggomark-network: "true"
+        io.kompose.service: chatplus-sidekiq
+    spec:
+      containers:
+        - args:
+            - bundle
+            - exec
+            - sidekiq
+            - -C
+            - config/sidekiq.yml
+          env:
+            - name: INSTALLATION_ENV
+              value: docker
+            - name: NODE_ENV
+              value: production
+            - name: RAILS_ENV
+              value: production
+          image: tiggomark/chatplus:latest
+          name: chatplus-sidekiq
+          resources: {}
+          volumeMounts:
+            - mountPath: /app/storage
+              name: chatplus-data-storage
+      restartPolicy: Always
+      volumes:
+        - name: chatplus-data-storage
+          persistentVolumeClaim:
+            claimName: chatplus-data-storage
+status: {}

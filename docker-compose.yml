@@ -70,8 +70,7 @@ services:
 
   chatplusbase: &chatplusbase
     image: tiggomark/chatplus:latest
-    env_file:
-        - chatplus.env
+
     volumes:
       - chatplus_data_storage:/app/storage
 
@@ -112,8 +111,7 @@ services:
     deploy:
       replicas: 1
     command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
-    env_file:
-      - chatplus.env
+
     volumes:
       - redis_data_cl:/data
     ports:
@@ -129,8 +127,7 @@ services:
     image: redis:alpine
     hostname: rediswhatsapp
     command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
-    env_file:
-      - .env-whatsapp-api
+
     deploy:
       replicas: 1
       resources:
@@ -459,9 +456,7 @@ services:
         limits:
           cpus: '0.5'
           memory: '800M'
-    env_file:
-      - common.env
-      - saas-connector.env
+
     depends_on:
         - mysql_8
 
@@ -575,7 +570,7 @@ services:
           - node.role == manager
           #- node.hostname == worker1
     environment:
-      DB_MYSQL_HOST: "mysql_db_5_7"
+      DB_MYSQL_HOST: "mysql_8"
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: "root"
       DB_MYSQL_PASSWORD: "123456789"
@@ -666,9 +661,7 @@ services:
           published: 8084
           protocol: tcp
           mode: ingress
-      env_file:
-        - common.env
-        - intersaas.env
+
       environment:
         #NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
         SPRING_PROFILES_ACTIVE: prod
