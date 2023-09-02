@@ -600,14 +600,15 @@ services:
           - node.role == manager
           #- node.hostname == worker1
     environment:
-      DB_MYSQL_HOST: "db_npm"
+      DB_MYSQL_HOST: "mysql_8"
       DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "root"
+      DB_MYSQL_USER: "npm"
       DB_MYSQL_PASSWORD: "123456789"
       DB_MYSQL_NAME: "npm"
       # Uncomment this if IPv6 is not enabled on your host
       DISABLE_IPV6: 'true'
     volumes:
+      - ./ssl/nginx.conf:/etc/nginx/custom.conf
       - npm_data:/data
       - npm_letsencrypt:/etc/letsencrypt
     networks:
