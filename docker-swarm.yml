@@ -557,6 +557,20 @@ services:
     networks:
       - tiggomark_network
 
+  db_npm:
+    hostname: db_npm
+    image: 'jc21/mariadb-aria:latest'
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456789'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: '123456789'
+    volumes:
+      - db_npm_data
+    networks:
+      - tiggomark_network
+      - nginx_network
+
   nginx:
     image: 'jc21/nginx-proxy-manager:latest'
     hostname: npm
@@ -575,7 +589,7 @@ services:
           - node.role == manager
           #- node.hostname == worker1
     environment:
-      DB_MYSQL_HOST: "mysql_db_5_7"
+      DB_MYSQL_HOST: "db_npm"
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: "root"
       DB_MYSQL_PASSWORD: "123456789"
@@ -718,6 +732,7 @@ volumes:
   projects_user-files:
   projects_public_user-files:
   mysql_8_data:
+  db_npm_data:
   tiggocrm:
   crm_upload_files:
   saas_connector_files:
