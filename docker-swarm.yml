@@ -561,10 +561,10 @@ services:
     hostname: db_npm
     image: jc21/mariadb-aria:latest
     environment:
-     - MYSQL_ROOT_PASSWORD='123456789'
-     - MYSQL_DATABASE='npm'
-     - MYSQL_USER='npm'
-     - MYSQL_PASSWORD='123456789'
+      MYSQL_ROOT_PASSWORD: '123456789'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: '123456789'
     volumes:
       - db_npm_data:/var/lib/mysql
     deploy:
