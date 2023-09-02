@@ -10,14 +10,14 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: '300M'
+          memory: '500M'
     environment:
       MYSQL_DATABASE: DB_markee
       MYSQL_USER: admin
       MYSQL_PASSWORD: 123456789
       MYSQL_ROOT_PASSWORD: 123456789
     volumes:
-      - mysql_db_5_7_dt:/var/lib/mysql
+      - mysql_db_5_7_data:/var/lib/mysql
     ports:
       - target: 3306
         published: 4501
@@ -723,7 +723,7 @@ volumes:
   saas_connector_files:
   redis_data_cl:
   redis_data_whatsapp_api:
-  mysql_db_5_7_dt:
+  mysql_db_5_7_data:
   markee_html_files:
   chatplus_data_storage:
   whatsapp_api_instances:
