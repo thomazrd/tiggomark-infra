@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   mysql_db_5_7:
-    image: mariadb:5.7.41
+    image: cytopia/mariadb-10.2
     hostname: mysql_db_5_7
     deploy:
       replicas: 1
