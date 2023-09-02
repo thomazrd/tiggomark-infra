@@ -21,7 +21,7 @@ services:
 
   postgres:
     image: postgres:12
-    #hostname: postgres-hostname
+    hostname: postgres-hostname
     deploy:
       replicas: 1
     volumes:
@@ -36,6 +36,29 @@ services:
         published: 5432
         protocol: tcp
         mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  phppgadmin:
+    image: dpage/pgadmin4:latest  # Imagem Docker oficial do phpPgAdmin
+    ports:
+      - target: 80
+        published: 7073
+        protocol: tcp
+        mode: ingress
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "email@mail.comm"  # Email padrão para login
+      PGADMIN_DEFAULT_PASSWORD: "@Leghacy123"  # Senha padrão para login
+      PGADMIN_LISTEN_PORT: 80
+      PGADMIN_SERVER_MODE: "True"
+      POSTGRES_HOSTNAME: "postgres-hostname"
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: "chatwoot_production"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "123456789"
+    deploy:
+      replicas: 1  # Número de réplicas do serviço
     networks:
       - tiggomark_network
       - nginx_network
