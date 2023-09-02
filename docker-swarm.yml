@@ -567,6 +567,12 @@ services:
       MYSQL_PASSWORD: '123456789'
     volumes:
       - db_npm_data
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '400M'
     networks:
       - tiggomark_network
       - nginx_network
