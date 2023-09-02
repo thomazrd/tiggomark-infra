@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   mysql_db_5_7:
-    image: mysql:5.7-oracle
+    image: mysql:5.7.41
     hostname: mysql_db_5_7
     deploy:
       replicas: 1
@@ -18,6 +18,8 @@ services:
       MYSQL_ROOT_PASSWORD: 123456789
     volumes:
       - mysql_db_5_7_data:/var/lib/mysql
+      - mysql_db_5_7_logs:/var/log/mysql
+      - mysql_db_5_7_config:/etc/mysql
     ports:
       - target: 3306
         published: 4504
@@ -756,6 +758,8 @@ volumes:
   whatsapp_api_instances:
   whatsapp_api_store:
   mongodb_data:
+  mysql_db_5_7_logs:
+  mysql_db_5_7_config:
   mongodb_configdb:
   db_crm_data_cluster1:
   api_evolution_instances:
