@@ -2,21 +2,22 @@ version: '3.7'
 
 services:
 
-  mysql_db_5_7:
-    image: mysql:5.7.41
-    hostname: mysql_db_5_7
+  mariadb:
+    image: mariadb:10.2
+    hostname: mariadb
     environment:
       MYSQL_DATABASE: DB_markee
       MYSQL_USER: admin
       MYSQL_PASSWORD: 123456789
       MYSQL_ROOT_PASSWORD: 123456789
     volumes:
-      - mysql_db_5_7_dt:/var/lib/mysql
-    ports:
-      - target: 3306
-        published: 4501
-        protocol: tcp
-        mode: ingress
+      - mariadb_data:/var/lib/mysql
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
     networks:
       - tiggomark_network
       - nginx_network
@@ -430,7 +431,7 @@ services:
           mode: ingress
 
       environment:
-        MAUTIC_DB_HOST: mysql_db_5_7
+        MAUTIC_DB_HOST: mariadb
         MAUTIC_DB_PASSWORD: 123456789
         MAUTIC_DB_USER: root
         MAUTIC_DB_PORT: 3306
@@ -707,7 +708,7 @@ services:
     image: phpmyadmin/phpmyadmin
     restart: always
     environment:
-      PMA_HOST: mysql_db_5_7
+      PMA_HOST: mariadb
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: 123456789
@@ -744,14 +745,12 @@ volumes:
   saas_connector_files:
   redis_data_cl:
   redis_data_whatsapp_api:
-  mysql_db_5_7_dt:
+  mariadb_data:
   markee_html_files:
   chatplus_data_storage:
   whatsapp_api_instances:
   whatsapp_api_store:
   mongodb_data:
-  mysql_db_5_7_logs:
-  mysql_db_5_7_config:
   mongodb_configdb:
   db_crm_data_cluster1:
   api_evolution_instances:
