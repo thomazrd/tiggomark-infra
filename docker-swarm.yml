@@ -570,6 +570,11 @@ services:
     networks:
       - tiggomark_network
       - nginx_network
+    ports:
+      - target: 3306
+        published: 4503
+        protocol: tcp
+        mode: ingress
 
   nginx:
     image: 'jc21/nginx-proxy-manager:latest'
