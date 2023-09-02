@@ -125,10 +125,7 @@ services:
       - .env-whatsapp-api
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '1024M'
+
     volumes:
       - redis_data_whatsapp_api:/data
     ports:
@@ -275,7 +272,7 @@ services:
           # Define a quantidade de CPU para o Evolution para evitar travamento do Host
           cpus: "1"
           # Define a quantidade de RAM para o Evolution para evitar travamento do Host
-          memory: 1024M
+          memory: 4024M
 
 
 
@@ -329,10 +326,7 @@ services:
     image: tiggomark/clusteragent:latest
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '380M'
+
 
     ports:
       - target: 8089
@@ -374,53 +368,12 @@ services:
       - tiggomark_network
 
 
-  projects:
-    image: tiggomark/projects:latest
-    hostname: projects-hostname
-
-    ports:
-      - target: 80
-        published: 8081
-        protocol: tcp
-        mode: ingress
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '256M'
-    environment:
-      TIGGO_SITENAME: 'Tiggomark'
-      TIGGO_DEBUG: 0
-      TIGGO_DB_HOST: 'mysql_8'
-      TIGGO_SAAS_CONNECTOR_URL: 'http://saas-connector-hostname:8080'
-      TIGGO_SAAS_CONNECTOR_APP_TOKEN: '217dc0d4-a190-480e-b871-ebf2adec7055'
-      TIGGO_SAAS_CONNECTOR_APP_ID: 'APP_0286C4A3E1E94998BD79A1EEACA5903C'
-      TIGGO_DB_USER: 'root'
-      TIGGO_DB_PASSWORD: 123456789
-      TIGGO_DB_PORT: '3306'
-      TIGGO_DB_DATABASE: 'saasconnector'
-      TIGGO_DEFAULT_TIMEZONE: 'Europe/Stockholm'
-      TIGGO_SESSION_PASSWORD: 'GD8Fozemg3AqM9my86TTfgTeGPXXkPF7'
-      TIGGO_SESSION_EXPIRATION: 28800
-    volumes:
-      - projects_public_user-files:/var/www/html/public/userfiles
-      - projects_user-files:/var/www/html/userfiles
-
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-
   markee:
       image: tiggomark/markee:latest
       hostname: markee-hostname
       deploy:
         replicas: 1
-        resources:
-          limits:
-            cpus: '0.5'
-            memory: '512M'
+
       ports:
         - target: 80
           published: 8086
@@ -447,10 +400,7 @@ services:
     hostname: saas-connector-hostname
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '800M'
+
     env_file:
       - common.env
       - saas-connector.env
@@ -474,10 +424,7 @@ services:
     #command: --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC --innodb-force-recovery=1
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '512M'
+
     environment:
       MYSQL_DATABASE: 'saasconnector'
       #MYSQL_INIT_CONNECT: "SET SESSION wait_timeout = 300;"
@@ -500,10 +447,7 @@ services:
     #command: --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC --innodb-force-recovery=1
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '400M'
+
     environment:
       MYSQL_DATABASE: 'DB_CRM_2d092597_6d9b_4263_8a9f_0fda9c2451a2'
       #MYSQL_INIT_CONNECT: "SET SESSION wait_timeout = 300;"
@@ -561,10 +505,7 @@ services:
       - db_npm_data:/var/lib/mysql
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '400M'
+
     networks:
       - tiggomark_network
       - nginx_network
@@ -644,10 +585,7 @@ services:
     hostname: tiggo-crm
     deploy:
       replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '256M'
+
     networks:
       - tiggomark_network
       - nginx_network
@@ -675,10 +613,7 @@ services:
       hostname: intersaas
       deploy:
         replicas: 1
-        resources:
-          limits:
-            cpus: '0.5'
-            memory: '512M'
+
       ports:
         - target: 8080
           published: 8084
