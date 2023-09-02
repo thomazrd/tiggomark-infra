@@ -14,7 +14,7 @@ services:
       - mysql_db_5_7_data_:/var/lib/mysql
     ports:
       - target: 3306
-        published: 4504
+        published: 4501
         protocol: tcp
         mode: ingress
     networks:
