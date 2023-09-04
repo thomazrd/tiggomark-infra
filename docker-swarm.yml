@@ -2,6 +2,51 @@ version: '3.7'
 
 services:
 
+
+  ia-doc-frontend:
+    hostname: ia-doc-frontend
+    image: tiggomark/iadocs-frontend:latest
+    env_file:
+      - .env-ia-docs
+    ports:
+      - target: 5173
+        published: 5173
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  ia-doc-frontend-backend:
+    image: tiggomark/iadocs-backend:latest
+    hostname: ia-doc-backend
+    env_file:
+      - .env-ia-docs
+    ports:
+      - target: 7091
+        published: 7091
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - ia-doc-indexes:/app/indexes
+      - ia-doc-inputs:/app/inputs
+      - ia-doc-vectors:/app/vectors
+
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  worker:
+    build: ./application
+    command: celery -A app.celery worker -l INFO
+    hostname: ia-doc-backend
+    env_file:
+      - .env-ia-docs
+
+    networks:
+      - tiggomark_network
+      - nginx_network
+
   mariadb:
     image: mariadb:10.2
     hostname: mariadb
@@ -495,6 +540,7 @@ services:
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: 123456789
+      UPLOAD_LIMIT: 300M
     ports:
       - '7072:80'
     networks:
@@ -681,6 +727,7 @@ services:
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: 123456789
+      UPLOAD_LIMIT: 300M
     ports:
       - '7070:80'
     networks:
@@ -709,6 +756,9 @@ volumes:
   mongodb_data:
   mongodb_configdb:
   db_crm_data_cluster1:
+  ia-doc-indexes:
+  ia-doc-inputs:
+  ia-doc-vectors:
   api_evolution_instances:
     external: true
     name: api_evolution_instances
