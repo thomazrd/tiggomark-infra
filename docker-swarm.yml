@@ -37,7 +37,7 @@ services:
       - nginx_network
 
   worker:
-    build: ./application
+    build: tiggomark/iadocs-backend:latest
     command: celery -A app.celery worker -l INFO
     hostname: ia-doc-backend
     env_file:
