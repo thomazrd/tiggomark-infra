@@ -17,7 +17,7 @@ services:
       - tiggomark_network
       - nginx_network
 
-  ia-doc-frontend-backend:
+  ia-doc-backend:
     image: tiggomark/iadocs-backend:latest
     hostname: ia-doc-backend
     env_file:
@@ -237,9 +237,9 @@ services:
       - LOG_LEVEL=ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS
       # Determina quanto tempo uma instância fica na memoria sem ser conectada
       # caso não queria remover instâncias sem conexão, deixe como false
-      - DEL_INSTANCE=false
+      - DEL_INSTANCE=true
       # Configura o dispositivo
-      - CONFIG_SESSION_PHONE_CLIENT=WhatsAppAPI
+      - CONFIG_SESSION_PHONE_CLIENT=Powchat
       - CONFIG_SESSION_PHONE_NAME=Chrome
       # *****************************************************************************************
       # Configura o Webhook
@@ -276,7 +276,7 @@ services:
       # Define se a apikey será exibida quando for listar instâncias
       - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
       # Configura quantos qrcode serão gerados
-      - QRCODE_LIMIT=3000
+      - QRCODE_LIMIT=10
       # *****************************************************************************************
       # Configurações do Webhook
       # *****************************************************************************************
