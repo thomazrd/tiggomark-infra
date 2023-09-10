@@ -237,7 +237,7 @@ services:
       - LOG_LEVEL=ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS
       # Determina quanto tempo uma instância fica na memoria sem ser conectada
       # caso não queria remover instâncias sem conexão, deixe como false
-      - DEL_INSTANCE=true
+      - DEL_INSTANCE=false
       # Configura o dispositivo
       - CONFIG_SESSION_PHONE_CLIENT=Powchat
       - CONFIG_SESSION_PHONE_NAME=Chrome
@@ -291,7 +291,7 @@ services:
       # Configura para Receber um Webhook quando o QRCode for gerado
       - WEBHOOK_EVENTS_QRCODE_UPDATED=true
       # Configura para enviar um webhook com tdas as mensagens ao conectar ao whatsapp
-      - WEBHOOK_EVENTS_MESSAGES_SET=false
+      - WEBHOOK_EVENTS_MESSAGES_SET=true
       # Configura para enviar um webhook com as mensagens novas
       - WEBHOOK_EVENTS_MESSAGES_UPSERT=true
       # Configura para enviar um webhook com as mensagens atualizadas
