@@ -237,7 +237,7 @@ services:
       - LOG_LEVEL=ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS
       # Determina quanto tempo uma instância fica na memoria sem ser conectada
       # caso não queria remover instâncias sem conexão, deixe como false
-      - DEL_INSTANCE=false
+      - DEL_INSTANCE=true
       # Configura o dispositivo
       - CONFIG_SESSION_PHONE_CLIENT=Powchat
       - CONFIG_SESSION_PHONE_NAME=Chrome
