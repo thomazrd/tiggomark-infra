@@ -2,71 +2,34 @@ version: '3.7'
 
 services:
 
-
-  ia-doc-frontend:
-    hostname: ia-doc-frontend
-    image: tiggomark/iadocs-frontend:latest
-    env_file:
-      - .env-ia-docs
-    ports:
-      - target: 5173
-        published: 5173
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-  ia-doc-backend:
-    image: tiggomark/iadocs-backend:latest
-    hostname: ia-doc-backend
-    env_file:
-      - .env-ia-docs
-    ports:
-      - target: 7091
-        published: 7091
-        protocol: tcp
-        mode: ingress
-    volumes:
-      - ia-doc-indexes:/app/indexes
-      - ia-doc-inputs:/app/inputs
-      - ia-doc-vectors:/app/vectors
-
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-  ia-doc-worker:
-    image: tiggomark/iadocs-backend:latest
-    command: celery -A app.celery worker -l INFO
-    hostname: ia-doc-backend
-    env_file:
-      - .env-ia-docs
-
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-  mariadb:
-    image: mariadb:10.2
-    hostname: mariadb
+  mysql_db_5_7:
+    image: mysql:5.7.41
+    hostname: mysql_db_5_7
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '300M'
     environment:
       MYSQL_DATABASE: DB_markee
       MYSQL_USER: admin
       MYSQL_PASSWORD: 123456789
       MYSQL_ROOT_PASSWORD: 123456789
     volumes:
-      - mariadb_data:/var/lib/mysql
-    deploy:
-      replicas: 1
-
+      - mysql_db_5_7_dt:/var/lib/mysql
+    ports:
+      - target: 3306
+        published: 4501
+        protocol: tcp
+        mode: ingress
     networks:
       - tiggomark_network
       - nginx_network
 
   postgres:
     image: postgres:12
-    hostname: postgres-hostname
+    #hostname: postgres-hostname
     deploy:
       replicas: 1
     volumes:
@@ -81,52 +44,6 @@ services:
         published: 5432
         protocol: tcp
         mode: ingress
-    networks:
-      - tiggomark_network
-      - nginx_network
-  phppgadmin:
-    image: dpage/pgadmin4:latest  # Imagem Docker oficial do phpPgAdmin
-    ports:
-      - target: 80
-        published: 7073
-        protocol: tcp
-        mode: ingress
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "email@mail.comm"  # Email padrão para login
-      PGADMIN_DEFAULT_PASSWORD: "@Leghacy123"  # Senha padrão para login
-      PGADMIN_LISTEN_PORT: 80
-      PGADMIN_SERVER_MODE: "True"
-      POSTGRES_HOSTNAME: "postgres-hostname"
-      POSTGRES_PORT: "5432"
-      POSTGRES_DB: "chatwoot_production"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "123456789"
-    deploy:
-      replicas: 1  # Número de réplicas do serviço
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-
-  phppgadmin:
-    image: dpage/pgadmin4:latest  # Imagem Docker oficial do phpPgAdmin
-    ports:
-      - target: 80
-        published: 7073
-        protocol: tcp
-        mode: ingress
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "email@mail.comm"  # Email padrão para login
-      PGADMIN_DEFAULT_PASSWORD: "@Leghacy123"  # Senha padrão para login
-      PGADMIN_LISTEN_PORT: 80
-      PGADMIN_SERVER_MODE: "True"
-      POSTGRES_HOSTNAME: "postgres-hostname"
-      POSTGRES_PORT: "5432"
-      POSTGRES_DB: "chatwoot_production"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "123456789"
-    deploy:
-      replicas: 1  # Número de réplicas do serviço
     networks:
       - tiggomark_network
       - nginx_network
@@ -153,8 +70,7 @@ services:
 
   chatplusbase: &chatplusbase
     image: tiggomark/chatplus:latest
-    env_file:
-        - chatplus.env
+
     volumes:
       - chatplus_data_storage:/app/storage
 
@@ -195,8 +111,7 @@ services:
     deploy:
       replicas: 1
     command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
-    env_file:
-      - chatplus.env
+
     volumes:
       - redis_data_cl:/data
     ports:
@@ -212,11 +127,13 @@ services:
     image: redis:alpine
     hostname: rediswhatsapp
     command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
-    env_file:
-      - .env-whatsapp-api
+
     deploy:
       replicas: 1
-
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1024M'
     volumes:
       - redis_data_whatsapp_api:/data
     ports:
@@ -260,9 +177,9 @@ services:
       - LOG_LEVEL=ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS
       # Determina quanto tempo uma instância fica na memoria sem ser conectada
       # caso não queria remover instâncias sem conexão, deixe como false
-      - DEL_INSTANCE=true
+      - DEL_INSTANCE=false
       # Configura o dispositivo
-      - CONFIG_SESSION_PHONE_CLIENT=Powchat
+      - CONFIG_SESSION_PHONE_CLIENT=WhatsAppAPI
       - CONFIG_SESSION_PHONE_NAME=Chrome
       # *****************************************************************************************
       # Configura o Webhook
@@ -299,7 +216,7 @@ services:
       # Define se a apikey será exibida quando for listar instâncias
       - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
       # Configura quantos qrcode serão gerados
-      - QRCODE_LIMIT=10
+      - QRCODE_LIMIT=3000
       # *****************************************************************************************
       # Configurações do Webhook
       # *****************************************************************************************
@@ -314,7 +231,7 @@ services:
       # Configura para Receber um Webhook quando o QRCode for gerado
       - WEBHOOK_EVENTS_QRCODE_UPDATED=true
       # Configura para enviar um webhook com tdas as mensagens ao conectar ao whatsapp
-      - WEBHOOK_EVENTS_MESSAGES_SET=true
+      - WEBHOOK_EVENTS_MESSAGES_SET=false
       # Configura para enviar um webhook com as mensagens novas
       - WEBHOOK_EVENTS_MESSAGES_UPSERT=true
       # Configura para enviar um webhook com as mensagens atualizadas
@@ -347,7 +264,7 @@ services:
       - REDIS_ENABLED=true
       - REDIS_URI=redis://redis_whatsapp_api:6379
       # Cors - * for all or set separate by commas -  ex.: 'yourdomain1.com, yourdomain2.com'
-      - CORS_ORIGIN=https://app.powchat.com.br,localhost,*
+      - CORS_ORIGIN=https://powchat-app.tiggomark.com.br,localhost,*
       - CORS_METHODS=PATCH,OPTIONS,POST,GET,PUT,DELETE
       - CORS_CREDENTIALS=true
     # Configura o Modo de Deploy da Aplicação
@@ -363,7 +280,7 @@ services:
           # Define a quantidade de CPU para o Evolution para evitar travamento do Host
           cpus: "1"
           # Define a quantidade de RAM para o Evolution para evitar travamento do Host
-          memory: 4024M
+          memory: 1024M
 
 
 
@@ -417,7 +334,10 @@ services:
     image: tiggomark/clusteragent:latest
     deploy:
       replicas: 1
-
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '380M'
 
     ports:
       - target: 8089
@@ -459,12 +379,53 @@ services:
       - tiggomark_network
 
 
+  projects:
+    image: tiggomark/projects:latest
+    hostname: projects-hostname
+
+    ports:
+      - target: 80
+        published: 8081
+        protocol: tcp
+        mode: ingress
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '256M'
+    environment:
+      TIGGO_SITENAME: 'Tiggomark'
+      TIGGO_DEBUG: 0
+      TIGGO_DB_HOST: 'mysql_8'
+      TIGGO_SAAS_CONNECTOR_URL: 'http://saas-connector-hostname:8080'
+      TIGGO_SAAS_CONNECTOR_APP_TOKEN: '217dc0d4-a190-480e-b871-ebf2adec7055'
+      TIGGO_SAAS_CONNECTOR_APP_ID: 'APP_0286C4A3E1E94998BD79A1EEACA5903C'
+      TIGGO_DB_USER: 'root'
+      TIGGO_DB_PASSWORD: 123456789
+      TIGGO_DB_PORT: '3306'
+      TIGGO_DB_DATABASE: 'saasconnector'
+      TIGGO_DEFAULT_TIMEZONE: 'Europe/Stockholm'
+      TIGGO_SESSION_PASSWORD: 'GD8Fozemg3AqM9my86TTfgTeGPXXkPF7'
+      TIGGO_SESSION_EXPIRATION: 28800
+    volumes:
+      - projects_public_user-files:/var/www/html/public/userfiles
+      - projects_user-files:/var/www/html/userfiles
+
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+
   markee:
       image: tiggomark/markee:latest
       hostname: markee-hostname
       deploy:
         replicas: 1
-
+        resources:
+          limits:
+            cpus: '0.5'
+            memory: '512M'
       ports:
         - target: 80
           published: 8086
@@ -472,7 +433,7 @@ services:
           mode: ingress
 
       environment:
-        MAUTIC_DB_HOST: mariadb
+        MAUTIC_DB_HOST: mysql_db_5_7
         MAUTIC_DB_PASSWORD: 123456789
         MAUTIC_DB_USER: root
         MAUTIC_DB_PORT: 3306
@@ -491,10 +452,11 @@ services:
     hostname: saas-connector-hostname
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '800M'
 
-    env_file:
-      - common.env
-      - saas-connector.env
     depends_on:
         - mysql_8
 
@@ -515,7 +477,10 @@ services:
     #command: --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC --innodb-force-recovery=1
     deploy:
       replicas: 1
-
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '512M'
     environment:
       MYSQL_DATABASE: 'saasconnector'
       #MYSQL_INIT_CONNECT: "SET SESSION wait_timeout = 300;"
@@ -538,7 +503,10 @@ services:
     #command: --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC --innodb-force-recovery=1
     deploy:
       replicas: 1
-
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '400M'
     environment:
       MYSQL_DATABASE: 'DB_CRM_2d092597_6d9b_4263_8a9f_0fda9c2451a2'
       #MYSQL_INIT_CONNECT: "SET SESSION wait_timeout = 300;"
@@ -563,7 +531,6 @@ services:
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: 123456789
-      UPLOAD_LIMIT: 300M
     ports:
       - '7072:80'
     networks:
@@ -585,28 +552,6 @@ services:
     networks:
       - tiggomark_network
 
-  db_npm:
-    hostname: db_npm
-    image: jc21/mariadb-aria:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: '123456789'
-      MYSQL_DATABASE: 'npm'
-      MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: '123456789'
-    volumes:
-      - db_npm_data:/var/lib/mysql
-    deploy:
-      replicas: 1
-
-    networks:
-      - tiggomark_network
-      - nginx_network
-    ports:
-      - target: 3306
-        published: 4503
-        protocol: tcp
-        mode: ingress
-
   nginx:
     image: 'jc21/nginx-proxy-manager:latest'
     hostname: npm
@@ -627,13 +572,12 @@ services:
     environment:
       DB_MYSQL_HOST: "mysql_8"
       DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
+      DB_MYSQL_USER: "root"
       DB_MYSQL_PASSWORD: "123456789"
       DB_MYSQL_NAME: "npm"
       # Uncomment this if IPv6 is not enabled on your host
       DISABLE_IPV6: 'true'
     volumes:
-      - ./ssl/nginx.conf:/etc/nginx/custom.conf
       - npm_data:/data
       - npm_letsencrypt:/etc/letsencrypt
     networks:
@@ -677,7 +621,10 @@ services:
     hostname: tiggo-crm
     deploy:
       replicas: 1
-
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '256M'
     networks:
       - tiggomark_network
       - nginx_network
@@ -705,15 +652,16 @@ services:
       hostname: intersaas
       deploy:
         replicas: 1
-
+        resources:
+          limits:
+            cpus: '0.5'
+            memory: '512M'
       ports:
         - target: 8080
           published: 8084
           protocol: tcp
           mode: ingress
-      env_file:
-        - common.env
-        - intersaas.env
+
       environment:
         #NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
         SPRING_PROFILES_ACTIVE: prod
@@ -732,11 +680,10 @@ services:
     image: phpmyadmin/phpmyadmin
     restart: always
     environment:
-      PMA_HOST: mariadb
+      PMA_HOST: mysql_db_5_7
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: 123456789
-      UPLOAD_LIMIT: 300M
     ports:
       - '7071:80'
     networks:
@@ -750,7 +697,6 @@ services:
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: 123456789
-      UPLOAD_LIMIT: 300M
     ports:
       - '7070:80'
     networks:
@@ -765,13 +711,12 @@ volumes:
   projects_user-files:
   projects_public_user-files:
   mysql_8_data:
-  db_npm_data:
   tiggocrm:
   crm_upload_files:
   saas_connector_files:
   redis_data_cl:
   redis_data_whatsapp_api:
-  mariadb_data:
+  mysql_db_5_7_dt:
   markee_html_files:
   chatplus_data_storage:
   whatsapp_api_instances:
@@ -779,9 +724,6 @@ volumes:
   mongodb_data:
   mongodb_configdb:
   db_crm_data_cluster1:
-  ia-doc-indexes:
-  ia-doc-inputs:
-  ia-doc-vectors:
   api_evolution_instances:
     external: true
     name: api_evolution_instances

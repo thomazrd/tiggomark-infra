@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.30.0 (9d8dcb518)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: chatplusbase
+  name: chatplusbase
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: chatplusbase
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.30.0 (9d8dcb518)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/tiggomark-infra-default: "true"
+        io.kompose.service: chatplusbase
+    spec:
+      containers:
+        - image: tiggomark/chatplus:latest
+          name: chatplusbase
+          resources: {}
+          volumeMounts:
+            - mountPath: /app/storage
+              name: chatplus-data-storage
+      restartPolicy: Always
+      volumes:
+        - name: chatplus-data-storage
+          persistentVolumeClaim:
+            claimName: chatplus-data-storage
+status: {}

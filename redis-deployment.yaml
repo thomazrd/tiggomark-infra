@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.30.0 (9d8dcb518)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: redis
+  name: redis
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.30.0 (9d8dcb518)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/tiggomark-infra-nginx-network: "true"
+        io.kompose.network/tiggomark-infra-tiggomark-network: "true"
+        io.kompose.service: redis
+    spec:
+      containers:
+        - args:
+            - sh
+            - -c
+            - redis-server --requirepass ""
+          image: redis:alpine
+          name: redis
+          ports:
+            - containerPort: 6379
+              hostPort: 6379
+              protocol: TCP
+          resources: {}
+          volumeMounts:
+            - mountPath: /data
+              name: redis-data-cl
+      hostname: redis-hostname
+      restartPolicy: Always
+      volumes:
+        - name: redis-data-cl
+          persistentVolumeClaim:
+            claimName: redis-data-cl
+status: {}

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.30.0 (9d8dcb518)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mysql-db-5-7
+  name: mysql-db-5-7
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mysql-db-5-7
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.30.0 (9d8dcb518)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/tiggomark-infra-nginx-network: "true"
+        io.kompose.network/tiggomark-infra-tiggomark-network: "true"
+        io.kompose.service: mysql-db-5-7
+    spec:
+      containers:
+        - env:
+            - name: MYSQL_DATABASE
+              value: DB_markee
+            - name: MYSQL_PASSWORD
+              value: "123456789"
+            - name: MYSQL_ROOT_PASSWORD
+              value: "123456789"
+            - name: MYSQL_USER
+              value: admin
+          image: mysql:5.7.41
+          name: mysql-db-5-7
+          ports:
+            - containerPort: 3306
+              hostPort: 4501
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: "314572800"
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mysql-db-5-7-dt
+      hostname: mysql_db_5_7
+      restartPolicy: Always
+      volumes:
+        - name: mysql-db-5-7-dt
+          persistentVolumeClaim:
+            claimName: mysql-db-5-7-dt
+status: {}

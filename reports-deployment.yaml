@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.30.0 (9d8dcb518)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: reports
+  name: reports
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: reports
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.30.0 (9d8dcb518)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/tiggomark-infra-nginx-network: "true"
+        io.kompose.network/tiggomark-infra-tiggomark-network: "true"
+        io.kompose.service: reports
+    spec:
+      containers:
+        - args:
+            - sh
+            - -c
+            - java -jar /app/metabase.jar migrate release-locks && java -jar /app/metabase.jar
+          env:
+            - name: MB_DB_DBNAME
+              value: metabase
+            - name: MB_DB_HOST
+              value: mysql_8
+            - name: MB_DB_PASS
+              value: "123456789"
+            - name: MB_DB_PORT
+              value: "3306"
+            - name: MB_DB_TYPE
+              value: mysql
+            - name: MB_DB_USER
+              value: root
+          image: metabase/metabase:latest
+          name: reports
+          ports:
+            - containerPort: 3000
+              hostPort: 3001
+              protocol: TCP
+          resources: {}
+      hostname: reports-hostname
+      restartPolicy: Always
+status: {}
