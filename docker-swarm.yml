@@ -3,6 +3,20 @@ version: '3.7'
 services:
 
 
+  tiggomark-forms:
+    image: formbricks/formbricks:latest
+    hostname: tiggomark-forms
+    env_file:
+      - .env-tiggomark-forms
+    ports:
+      - target: 3000
+        published: 3002
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
   ia-doc-frontend:
     hostname: ia-doc-frontend
     image: tiggomark/iadocs-frontend:latest
@@ -260,7 +274,7 @@ services:
       - LOG_LEVEL=ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS
       # Determina quanto tempo uma instância fica na memoria sem ser conectada
       # caso não queria remover instâncias sem conexão, deixe como false
-      - DEL_INSTANCE=true
+      - DEL_INSTANCE=false
       # Configura o dispositivo
       - CONFIG_SESSION_PHONE_CLIENT=Powchat
       - CONFIG_SESSION_PHONE_NAME=Chrome
