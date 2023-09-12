@@ -17,8 +17,6 @@ services:
       - tiggomark_network
       - nginx_network
 
-
-
   ia-doc-frontend:
     hostname: ia-doc-frontend
     image: tiggomark/iadocs-frontend:latest
