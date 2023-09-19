@@ -380,6 +380,17 @@ services:
           memory: 4024M
 
 
+  mongo:
+    image: mongo:6
+    hostname: mongo_iadocs
+    ports:
+      - target: 27017
+        published: 27018
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - mongo_iadocs_data:/data/db
+
 
   mongodb:
     container_name: mongodb
@@ -792,6 +803,7 @@ volumes:
   whatsapp_api_store:
   mongodb_data:
   mongodb_configdb:
+  mongo_iadocs_data:
   db_crm_data_cluster1:
   ia-doc-indexes:
   ia-doc-inputs:
