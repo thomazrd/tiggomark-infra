@@ -380,7 +380,7 @@ services:
           memory: 4024M
 
 
-  mongo:
+  mongo_iadocs:
     image: mongo:6
     hostname: mongo_iadocs
     ports:
@@ -391,6 +391,9 @@ services:
     volumes:
       - mongo_iadocs_data:/data/db
 
+    networks:
+      - tiggomark_network
+      - nginx_network
 
   mongodb:
     container_name: mongodb
