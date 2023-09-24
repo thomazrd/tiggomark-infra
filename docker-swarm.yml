@@ -155,8 +155,6 @@ services:
     networks:
       - tiggomark_network
       - nginx_network
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
     env_file: .env-typebot
 
   typebot-viewer:
