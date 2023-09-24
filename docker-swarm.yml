@@ -146,7 +146,7 @@ services:
       - nginx_network
 
   typebot-builder:
-    image: baptistearno/typebot-builder:latest
+    image: baptistearno/typebot-builder:2.17.0
     hostname: typebot-builder
     ports:
       - target: 3000
@@ -158,7 +158,7 @@ services:
     env_file: .env-typebot
 
   typebot-viewer:
-    image: baptistearno/typebot-viewer:latest
+    image: baptistearno/typebot-viewer:2.17.0
     hostname: typebot-viewer
     restart: always
     env_file: .env-typebot
