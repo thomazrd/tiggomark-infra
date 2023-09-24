@@ -145,6 +145,33 @@ services:
       - tiggomark_network
       - nginx_network
 
+  typebot-builder:
+    image: baptistearno/typebot-builder:latest
+    hostname: typebot-builder
+    ports:
+      - target: 3000
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    env_file: .env-typebot
+
+  typebot-viewer:
+    image: baptistearno/typebot-viewer:latest
+    hostname: typebot-viewer
+    restart: always
+    env_file: .env-typebot
+    ports:
+      - target: 3000
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
   reports:
     hostname: reports-hostname
     image: metabase/metabase:latest
