@@ -170,6 +170,18 @@ services:
       - tiggomark_network
       - nginx_network
 
+  typebot-db:
+    hostname: typebot-db
+    image: postgres:13
+    volumes:
+      - -typebot-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=typebot
+      - POSTGRES_PASSWORD=typebot
+    networks:
+      - tiggomark_network
+      - nginx_network
+
   reports:
     hostname: reports-hostname
     image: metabase/metabase:latest
@@ -811,6 +823,7 @@ services:
 
 volumes:
   postgres_data:
+  typebot-db-data:
   npm_data:
   npm_letsencrypt:
   rabbitmq-data-prod:
