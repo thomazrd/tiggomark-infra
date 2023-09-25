@@ -174,7 +174,7 @@ services:
     hostname: typebot-db
     image: postgres:13
     volumes:
-      - -typebot-db-data:/var/lib/postgresql/data
+      - typebot-db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=typebot
       - POSTGRES_PASSWORD=typebot
