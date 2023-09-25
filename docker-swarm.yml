@@ -150,6 +150,7 @@ services:
     hostname: typebot-builder
     ports:
       - target: 3000
+        published: 3003
         protocol: tcp
         mode: ingress
     networks:
@@ -164,23 +165,14 @@ services:
     env_file: .env-typebot
     ports:
       - target: 3000
+        published: 3004
         protocol: tcp
         mode: ingress
     networks:
       - tiggomark_network
       - nginx_network
 
-  typebot-db:
-    hostname: typebot-db
-    image: postgres:13
-    volumes:
-      - typebot-db-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=typebot
-      - POSTGRES_PASSWORD=typebot
-    networks:
-      - tiggomark_network
-      - nginx_network
+
 
   reports:
     hostname: reports-hostname
