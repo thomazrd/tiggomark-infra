@@ -303,7 +303,7 @@ services:
       - LOG_LEVEL=ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS
       # Determina quanto tempo uma instância fica na memoria sem ser conectada
       # caso não queria remover instâncias sem conexão, deixe como false
-      - DEL_INSTANCE=false
+      - DEL_INSTANCE=true
       # Configura o dispositivo
       - CONFIG_SESSION_PHONE_CLIENT=Powchat
       - CONFIG_SESSION_PHONE_NAME=Chrome
@@ -395,11 +395,11 @@ services:
       - CORS_CREDENTIALS=true
     # Configura o Modo de Deploy da Aplicação
     deploy:
-      mode: replicated # sempre como replicated
+      #mode: replicated # sempre como replicated
       replicas: 1 # geralmente somente 1 réplica
-      placement:
-        constraints:
-          - node.role == manager
+      #placement:
+        #constraints:
+          #- node.role == manager
           # - node.hostname == worker1
       resources:
         limits:
