@@ -17,49 +17,6 @@ services:
       - tiggomark_network
       - nginx_network
 
-  ia-doc-frontend:
-    hostname: ia-doc-frontend
-    image: tiggomark/iadocs-frontend:latest
-    env_file:
-      - .env-ia-docs
-    ports:
-      - target: 5173
-        published: 5173
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-  ia-doc-backend:
-    image: tiggomark/iadocs-backend:latest
-    hostname: ia-doc-backend
-    env_file:
-      - .env-ia-docs
-    ports:
-      - target: 7091
-        published: 7091
-        protocol: tcp
-        mode: ingress
-    volumes:
-      - ia-doc-indexes:/app/indexes
-      - ia-doc-inputs:/app/inputs
-      - ia-doc-vectors:/app/vectors
-
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-  ia-doc-worker:
-    image: tiggomark/iadocs-backend:latest
-    command: celery -A app.celery worker -l INFO
-    hostname: ia-doc-worker
-    env_file:
-      - .env-ia-docs
-
-    networks:
-      - tiggomark_network
-      - nginx_network
 
   mariadb:
     image: mariadb:10.2
@@ -171,7 +128,6 @@ services:
     networks:
       - tiggomark_network
       - nginx_network
-
 
 
   reports:
