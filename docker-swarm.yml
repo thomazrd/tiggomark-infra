@@ -311,9 +311,9 @@ services:
       # Configura o Webhook
       # *****************************************************************************************
       # Armazena as mensagens temporariamente
-      - STORE_MESSAGES=true
+      - STORE_MESSAGES=false
       # Armazena mensagens enviadas temporariamente
-      - STORE_MESSAGE_UP=true
+      - STORE_MESSAGE_UP=false
       # Armazenos os contatos temporariamente
       - STORE_CONTACTS=true
       # Armazena o ID das conversas que não estão arquivadas temporariamente
