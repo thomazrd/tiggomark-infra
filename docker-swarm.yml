@@ -34,6 +34,25 @@ services:
     networks:
       - tiggomark_network
       - nginx_network
+      -
+
+  postgres-chatplus:
+    image: postgres:12
+    hostname: postgres-chatplus
+    deploy:
+      replicas: 1
+    volumes:
+      - postgres_chatplus_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=chatwoot_production
+      - POSTGRES_USER=postgres
+      # Please provide your own password.
+      - POSTGRES_PASSWORD=123456789
+    ports:
+      - target: 5432
+        published: 5433
+        protocol: tcp
+        mode: ingress
 
   postgres:
     image: postgres:12
@@ -771,6 +790,7 @@ services:
 
 volumes:
   postgres_data:
+  postgres_chatplus_data:
   typebot-db-data:
   npm_data:
   npm_letsencrypt:
