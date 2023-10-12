@@ -3,20 +3,6 @@ version: '3.7'
 services:
 
 
-  tiggomark-forms:
-    image: formbricks/formbricks:latest
-    hostname: tiggomark-forms
-    env_file:
-      - .env-tiggomark-forms
-    ports:
-      - target: 3000
-        published: 3002
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-      - nginx_network
-
 
   mariadb:
     image: mariadb:10.2
@@ -34,7 +20,7 @@ services:
     networks:
       - tiggomark_network
       - nginx_network
-      -
+
 
   postgres-chatplus:
     image: postgres:12
@@ -121,32 +107,6 @@ services:
       - tiggomark_network
       - nginx_network
 
-  typebot-builder:
-    image: baptistearno/typebot-builder:2.17.0
-    hostname: typebot-builder
-    ports:
-      - target: 3000
-        published: 3003
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-      - nginx_network
-    env_file: .env-typebot
-
-  typebot-viewer:
-    image: baptistearno/typebot-viewer:2.17.0
-    hostname: typebot-viewer
-    restart: always
-    env_file: .env-typebot
-    ports:
-      - target: 3000
-        published: 3004
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-      - nginx_network
 
 
   reports:
@@ -384,20 +344,7 @@ services:
           memory: 4024M
 
 
-  mongo_iadocs:
-    image: mongo:6
-    hostname: mongo_iadocs
-    ports:
-      - target: 27017
-        published: 27018
-        protocol: tcp
-        mode: ingress
-    volumes:
-      - mongo_iadocs_data:/data/db
 
-    networks:
-      - tiggomark_network
-      - nginx_network
 
   mongodb:
     container_name: mongodb
@@ -564,43 +511,6 @@ services:
     networks:
       - tiggomark_network
 
-  db_crm:
-    image: mysql:8
-    hostname: db_crm
-    #command: --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC --innodb-force-recovery=1
-    deploy:
-      replicas: 1
-
-    environment:
-      MYSQL_DATABASE: 'DB_CRM_2d092597_6d9b_4263_8a9f_0fda9c2451a2'
-      #MYSQL_INIT_CONNECT: "SET SESSION wait_timeout = 300;"
-      MYSQL_USER: 'admin'
-      MYSQL_PASSWORD: 123456789
-      MYSQL_ROOT_PASSWORD: 123456789
-    volumes:
-      - db_crm_data_cluster1:/var/lib/mysql
-    ports:
-      - target: 3306
-        published: 4502
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-
-  phpmyadmin_crm:
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    environment:
-      PMA_HOST: db_crm
-      PMA_PORT: 3306
-      PMA_USER: root
-      PMA_PASSWORD: 123456789
-      UPLOAD_LIMIT: 300M
-    ports:
-      - '7072:80'
-    networks:
-      - tiggomark_network
-
 
   rabbitmq:
     hostname: rabbitmq
@@ -671,65 +581,6 @@ services:
     networks:
       - tiggomark_network
       - nginx_network
-
-  espocrm-daemon:
-    image: tiggomark/crm:latest
-    volumes:
-      - tiggocrm:/var/www/html
-
-    entrypoint: docker-daemon.sh
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-  espocrm-websocket:
-    image: tiggomark/crm:latest
-    hostname: espocrm-websocket
-    container_name: espocrm-websocket
-    environment:
-      ESPOCRM_CONFIG_USE_WEB_SOCKET: "true"
-      ESPOCRM_CONFIG_WEB_SOCKET_URL: "ws://espocrm-websocket:8083"
-      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBSCRIBER_DSN: "tcp://*:7777"
-      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBMISSION_DSN: "tcp://espocrm-websocket:7777"
-    volumes:
-      - tiggocrm:/var/www/html
-    entrypoint: docker-websocket.sh
-    ports:
-      - target: 8080
-        published: 8083
-        protocol: tcp
-        mode: ingress
-
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-  crm:
-    image: tiggomark/crm:latest
-    hostname: tiggo-crm
-    deploy:
-      replicas: 1
-
-    networks:
-      - tiggomark_network
-      - nginx_network
-    environment:
-      ESPOCRM_DATABASE_HOST: 'db_crm'
-      ESPOCRM_DATABASE_USER: root
-      ESPOCRM_DATABASE_NAME: DB_CRM_2d092597_6d9b_4263_8a9f_0fda9c2451a2
-      ESPOCRM_DATABASE_PASSWORD: 123456789
-      ESPOCRM_ADMIN_USERNAME: admin
-      ESPOCRM_ADMIN_PASSWORD: leghacy123
-      ESPOCRM_SITE_URL: "http://tiggo-crm:8082"
-    volumes:
-      - tiggocrm:/var/www/html
-      - crm_upload_files:/var/upload
-
-    ports:
-      - target: 80
-        published: 8082
-        protocol: tcp
-        mode: ingress
 
 
   intersaas:
