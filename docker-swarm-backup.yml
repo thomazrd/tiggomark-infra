@@ -1,0 +1,705 @@
+version: '3.7'
+
+services:
+
+  mariadb:
+    image: mariadb:10.2
+    hostname: mariadb
+    environment:
+      MYSQL_DATABASE: DB_markee
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 123456789
+      MYSQL_ROOT_PASSWORD: 123456789
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    deploy:
+      replicas: 1
+
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+
+  postgres-chatplus:
+    image: postgres:12
+    hostname: postgres-chatplus
+    deploy:
+      replicas: 1
+    volumes:
+      - postgres_chatplus_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=chatwoot_production
+      - POSTGRES_USER=postgres
+      # Please provide your own password.
+      - POSTGRES_PASSWORD=123456789
+    ports:
+      - target: 5432
+        published: 5433
+        protocol: tcp
+        mode: ingress
+
+  postgres:
+    image: postgres:12
+    hostname: postgres-hostname
+    deploy:
+      replicas: 1
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=chatwoot_production
+      - POSTGRES_USER=postgres
+      # Please provide your own password.
+      - POSTGRES_PASSWORD=123456789
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+  phppgadmin:
+    image: dpage/pgadmin4:latest  # Imagem Docker oficial do phpPgAdmin
+    ports:
+      - target: 80
+        published: 7073
+        protocol: tcp
+        mode: ingress
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "email@mail.comm"  # Email padrão para login
+      PGADMIN_DEFAULT_PASSWORD: "@Leghacy123"  # Senha padrão para login
+      PGADMIN_LISTEN_PORT: 80
+      PGADMIN_SERVER_MODE: "True"
+      POSTGRES_HOSTNAME: "postgres-hostname"
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: "chatwoot_production"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "123456789"
+    deploy:
+      replicas: 1  # Número de réplicas do serviço
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+
+  phppgadmin:
+    image: dpage/pgadmin4:latest  # Imagem Docker oficial do phpPgAdmin
+    ports:
+      - target: 80
+        published: 7073
+        protocol: tcp
+        mode: ingress
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "email@mail.comm"  # Email padrão para login
+      PGADMIN_DEFAULT_PASSWORD: "@Leghacy123"  # Senha padrão para login
+      PGADMIN_LISTEN_PORT: 80
+      PGADMIN_SERVER_MODE: "True"
+      POSTGRES_HOSTNAME: "postgres-hostname"
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: "chatwoot_production"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "123456789"
+    deploy:
+      replicas: 1  # Número de réplicas do serviço
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+
+  reports:
+    hostname: reports-hostname
+    image: metabase/metabase:latest
+    environment:
+      MB_DB_TYPE: mysql
+      MB_DB_DBNAME: metabase
+      MB_DB_PORT: 3306
+      MB_DB_USER: root
+      MB_DB_PASS: 123456789
+      MB_DB_HOST: mysql_8
+    command: sh -c "java -jar /app/metabase.jar migrate release-locks && java -jar /app/metabase.jar"
+    ports:
+      - target: 3000
+        published: 3001
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  chatplusbase: &chatplusbase
+    image: tiggomark/chatplus:latest
+    env_file:
+        - chatplus.env
+    volumes:
+      - chatplus_data_storage:/app/storage
+
+  chatplus:
+    <<: *chatplusbase
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+    entrypoint: docker/entrypoints/rails.sh
+    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
+    hostname: powchat-hostname
+    deploy:
+      replicas: 1
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  chatplus_sidekiq:
+    <<: *chatplusbase
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+    command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  redis:
+    image: redis:alpine
+    hostname: redis-hostname
+    deploy:
+      replicas: 1
+    command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
+    env_file:
+      - chatplus.env
+    volumes:
+      - redis_data_cl:/data
+    ports:
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  redis_whatsapp_api:
+    image: redis:alpine
+    hostname: rediswhatsapp
+    command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
+    env_file:
+      - .env-whatsapp-api
+    deploy:
+      replicas: 1
+
+    volumes:
+      - redis_data_whatsapp_api:/data
+    ports:
+      - target: 6379
+        published: 6375
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+    # Definição do Nome do Serviço
+  whatsapp_api:
+    # imagem do Evolution
+    image: tiggomark/evolution-api:latest
+    # Nome do containner
+    hostname: whatsapp_api
+    # comando padrão para subir o servidor web
+    command: [ "node", "./dist/src/main.js" ]
+    # configura a rede do serviço
+    networks:
+      - tiggomark_network
+      - nginx_network
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - api_evolution_instances:/evolution/instances
+      - api_evolution_store:/evolution/store
+    # Variáveis de ambiente para configurar o Evolution
+    environment:
+      # *****************************************************************************************
+      # Configurações Gerais
+      # *****************************************************************************************
+      # Configura o Evolution para ler as variáveis de ambiente
+      - SERVER_URL=http://whatsapp_api:8080
+      - DOCKER_ENV=true
+      # Configura o Nível de Log
+      - LOG_LEVEL=ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS
+      # Determina quanto tempo uma instância fica na memoria sem ser conectada
+      # caso não queria remover instâncias sem conexão, deixe como false
+      - DEL_INSTANCE=true
+      # Configura o dispositivo
+      - CONFIG_SESSION_PHONE_CLIENT=Powchat
+      - CONFIG_SESSION_PHONE_NAME=Chrome
+      # *****************************************************************************************
+      # Configura o Webhook
+      # *****************************************************************************************
+      # Armazena as mensagens temporariamente
+      - STORE_MESSAGES=false
+      # Armazena mensagens enviadas temporariamente
+      - STORE_MESSAGE_UP=false
+      # Armazenos os contatos temporariamente
+      - STORE_CONTACTS=true
+      # Armazena o ID das conversas que não estão arquivadas temporariamente
+      - STORE_CHATS=true
+      # *****************************************************************************************
+      # Limpeza dos arquivos temporários
+      # *****************************************************************************************
+      # Configura o intervalo de limpeza dos arquivos temporários
+      # O sistema vai limpar tudo a cada x tempo
+      - CLEAN_STORE_CLEANING_INTERVAL=7200 # seconds === 2h
+      # Habilita a limpeza das mensagens
+      - CLEAN_STORE_MESSAGES=true
+      # Habilita a limpeza das mensagens enviadas
+      - CLEAN_STORE_MESSAGE_UP=true
+      # Habilita a limpeza dos contatos
+      - CLEAN_STORE_CONTACTS=true
+      # Habilita a limpeza do ID das conversas que não estão arquivadas
+      - CLEAN_STORE_CHATS=true
+      # *****************************************************************************************
+      # Autenticação da API
+      # *****************************************************************************************
+      # Configura o Evolution para autenticar como API Key
+      - AUTHENTICATION_TYPE=apikey
+      # Define a API Key Global
+      - AUTHENTICATION_API_KEY=Y6D711FCDE4D4FD5936D44120E7139G6 # ALTERE SUA APIKEY
+      # Define se a apikey será exibida quando for listar instâncias
+      - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
+      # Configura quantos qrcode serão gerados
+      - QRCODE_LIMIT=10
+      # *****************************************************************************************
+      # Configurações do Webhook
+      # *****************************************************************************************
+      # Habilita o Webhook Global
+      - WEBHOOK_GLOBAL_ENABLED=false
+      # Define o endereço do Webhook Global
+      - WEBHOOK_GLOBAL_URL=https://URL
+      # Habilita ou Desabilita os Webhooks
+      - WEBHOOK_GLOBAL_WEBHOOK_BY_EVENTS=false
+      # Configura para receber o evento no inicio da aplicação
+      - WEBHOOK_EVENTS_APPLICATION_STARTUP=false
+      # Configura para Receber um Webhook quando o QRCode for gerado
+      - WEBHOOK_EVENTS_QRCODE_UPDATED=true
+      # Configura para enviar um webhook com tdas as mensagens ao conectar ao whatsapp
+      - WEBHOOK_EVENTS_MESSAGES_SET=true
+      # Configura para enviar um webhook com as mensagens novas
+      - WEBHOOK_EVENTS_MESSAGES_UPSERT=true
+      # Configura para enviar um webhook com as mensagens atualizadas
+      - WEBHOOK_EVENTS_MESSAGES_UPDATE=true
+      # Configura para enviar um webhook com todos os contatos ao conectar ao whatsapp
+      - WEBHOOK_EVENTS_CONTACTS_SET=true
+      # Configura para enviar um webhook com os contatos novos
+      - WEBHOOK_EVENTS_CONTACTS_UPSERT=true
+      # Configura para enviar um webhook com os contatos atualizados
+      - WEBHOOK_EVENTS_CONTACTS_UPDATE=true
+      # Configura para enviar um webhook quando um contato estiver online
+      - WEBHOOK_EVENTS_PRESENCE_UPDATE=true
+      # Configura para enviar um webhook com todos os chats quando conectar ao whatsapp
+      - WEBHOOK_EVENTS_CHATS_SET=true
+      # Configura para enviar um webhook com os chats novos
+      - WEBHOOK_EVENTS_CHATS_UPSERT=true
+      # Configura para enviar um webhook com os chats atualizados
+      - WEBHOOK_EVENTS_CHATS_UPDATE=true
+      # Configura para enviar um webhook quando um chat for arquivado
+      - WEBHOOK_EVENTS_CHATS_DELETE=true
+      # Configura para enviar um webhook para quando um grupo for criado
+      - WEBHOOK_EVENTS_GROUPS_UPSERT=true
+      # Configura para enviar um webhook para quando um grupo for atualizado
+      - WEBHOOK_EVENTS_GROUPS_UPDATE=true
+      # Configura para enviar um webhook para quando participante entrar/sair do grupo
+      - WEBHOOK_EVENTS_GROUP_PARTICIPANTS_UPDATE=true
+      # Configura para enviar um webhook para quando a conexão cair ou voltar
+      - WEBHOOK_EVENTS_CONNECTION_UPDATE=true
+      # Configura o Redis
+      - REDIS_ENABLED=true
+      - REDIS_URI=redis://redis_whatsapp_api:6379
+      # Cors - * for all or set separate by commas -  ex.: 'yourdomain1.com, yourdomain2.com'
+      - CORS_ORIGIN=https://app.powchat.com.br,localhost,*
+      - CORS_METHODS=PATCH,OPTIONS,POST,GET,PUT,DELETE
+      - CORS_CREDENTIALS=true
+    # Configura o Modo de Deploy da Aplicação
+    deploy:
+      #mode: replicated # sempre como replicated
+      replicas: 1 # geralmente somente 1 réplica
+      #placement:
+        #constraints:
+          #- node.role == manager
+          # - node.hostname == worker1
+      resources:
+        limits:
+          # Define a quantidade de CPU para o Evolution para evitar travamento do Host
+          cpus: "1"
+          # Define a quantidade de RAM para o Evolution para evitar travamento do Host
+          memory: 4024M
+
+
+
+
+  mongodb:
+    container_name: mongodb
+    hostname: mongodb
+    image: mongo
+    ports:
+      - target: 27017
+        published: 27017
+        protocol: tcp
+        mode: ingress
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_configdb:/data/configdb
+    networks:
+      - tiggomark_network
+      - nginx_network
+    expose:
+      - 27017
+
+  mongo-express:
+    image: mongo-express
+    hostname: mongo-express
+    networks:
+      - tiggomark_network
+      - nginx_network
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: root
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+    ports:
+      - target: 8081
+        published: 8087
+        protocol: tcp
+        mode: ingress
+    links:
+      - mongodb
+
+   ###################################################
+
+  cluster_agent:
+    hostname: clusteragent-hostname
+    image: tiggomark/clusteragent:latest
+    deploy:
+      replicas: 1
+
+
+    ports:
+      - target: 8089
+        published: 8089
+        protocol: tcp
+        mode: ingress
+
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
+      OTEL_EXPORTER_OTLP_ENDPOINT: 'http://otel-collector:4317'
+      DB_HOST: 'mysql_8'
+      DB_PORT: '3306'
+      DB_NAME: 'saasconnector'
+      DB_USERNAME: 'root'
+      DB_PASSWORD: '123456789'
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/temp:/var/temp
+
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    hostname: portainer-hostname
+    ports:
+      - target: 9000
+        published: 9000
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - tiggomark_network
+
+
+  markee:
+      image: tiggomark/markee:latest
+      hostname: markee-hostname
+      deploy:
+        replicas: 1
+
+      ports:
+        - target: 80
+          published: 8086
+          protocol: tcp
+          mode: ingress
+
+      environment:
+        MAUTIC_DB_HOST: mariadb
+        MAUTIC_DB_PASSWORD: 123456789
+        MAUTIC_DB_USER: root
+        MAUTIC_DB_PORT: 3306
+        MAUTIC_DB_NAME: DB_markee
+
+      volumes:
+        - markee_html_files:/var/www/html
+
+      networks:
+        - tiggomark_network
+        - nginx_network
+
+
+  saas_connector:
+    image: tiggomark/saasconnector:latest
+    hostname: saas-connector-hostname
+    deploy:
+      replicas: 1
+
+    env_file:
+      - common.env
+      - saas-connector.env
+    depends_on:
+        - mysql_8
+
+    volumes:
+      - saas_connector_files:/var/uploadfiles
+    networks:
+      - tiggomark_network
+      - nginx_network
+    ports:
+      - target: 8089
+        published: 8085
+        protocol: tcp
+        mode: ingress
+
+  mysql_8:
+    image: mysql:8
+    hostname: mysql_8
+    #command: --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC --innodb-force-recovery=1
+    deploy:
+      replicas: 1
+
+    environment:
+      MYSQL_DATABASE: 'saasconnector'
+      #MYSQL_INIT_CONNECT: "SET SESSION wait_timeout = 300;"
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: 123456789
+      MYSQL_ROOT_PASSWORD: 123456789
+    volumes:
+      - mysql_8_data:/var/lib/mysql
+    ports:
+      - target: 3306
+        published: 4500
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+
+
+
+
+
+
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:3.8.17-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq-data-prod:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+    networks:
+      - tiggomark_network
+
+  db_npm:
+    hostname: db_npm
+    image: jc21/mariadb-aria:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456789'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: '123456789'
+    volumes:
+      - db_npm_data:/var/lib/mysql
+    deploy:
+      replicas: 1
+
+    networks:
+      - tiggomark_network
+      - nginx_network
+    ports:
+      - target: 3306
+        published: 4503
+        protocol: tcp
+        mode: ingress
+
+  nginx:
+    image: 'jc21/nginx-proxy-manager:latest'
+    hostname: npm
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+      # Add any other Stream port you want to expose
+      # - '21:21' # FTP
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+          #- node.hostname == worker1
+    environment:
+      DB_MYSQL_HOST: "mysql_8"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "123456789"
+      DB_MYSQL_NAME: "npm"
+      # Uncomment this if IPv6 is not enabled on your host
+      DISABLE_IPV6: 'true'
+    volumes:
+      - ./ssl/nginx.conf:/etc/nginx/custom.conf
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+  espocrm-daemon:
+    image: tiggomark/crm:latest
+    volumes:
+      - tiggocrm:/var/www/html
+
+    entrypoint: docker-daemon.sh
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+
+  intersaas:
+      image: tiggomark/intersaas:latest
+      hostname: intersaas
+      deploy:
+        replicas: 1
+
+      ports:
+        - target: 8080
+          published: 8084
+          protocol: tcp
+          mode: ingress
+      env_file:
+        - common.env
+        - intersaas.env
+      environment:
+        #NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
+        SPRING_PROFILES_ACTIVE: prod
+        DB_HOST: mysql_8
+        DB_USERNAME: root
+        DB_PASSWORD: 123456789
+        DB_PORT: 3306
+        DB_NAME: SAAS_INTEGRATOR_ROOT_DB
+        RABBIT_MQ_HOST: rabbitmq
+
+      networks:
+        - tiggomark_network
+        - nginx_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: 123456789
+      UPLOAD_LIMIT: 300M
+    ports:
+      - '7071:80'
+    networks:
+      - tiggomark_network
+
+  phpmyadmin2:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql_8
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: 123456789
+      UPLOAD_LIMIT: 300M
+    ports:
+      - '7070:80'
+    networks:
+      - tiggomark_network
+
+volumes:
+  postgres_data:
+  postgres_chatplus_data:
+  typebot-db-data:
+  npm_data:
+  npm_letsencrypt:
+  rabbitmq-data-prod:
+  portainer_data:
+  projects_user-files:
+  projects_public_user-files:
+  mysql_8_data:
+  db_npm_data:
+  tiggocrm:
+  crm_upload_files:
+  saas_connector_files:
+  redis_data_cl:
+  redis_data_whatsapp_api:
+  mariadb_data:
+  markee_html_files:
+  chatplus_data_storage:
+  whatsapp_api_instances:
+  whatsapp_api_store:
+  mongodb_data:
+  mongodb_configdb:
+  mongo_iadocs_data:
+  db_crm_data_cluster1:
+  ia-doc-indexes:
+  ia-doc-inputs:
+  ia-doc-vectors:
+  api_evolution_instances:
+    external: true
+    name: api_evolution_instances
+  api_evolution_store:
+    external: true
+    name: api_evolution_store
+
+
+networks:
+  tiggomark_network:
+    driver: overlay
+    ipam:
+        config:
+            - subnet: 10.0.9.0/24
+    attachable: true
+
+  nginx_network:
+    driver: overlay
+
+
+
+
+
+
