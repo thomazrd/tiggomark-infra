@@ -39,6 +39,10 @@ services:
         protocol: tcp
         mode: ingress
 
+    networks:
+      - tiggomark_network
+      - nginx_network
+
 
   postgres-chatplus:
     image: postgres:12
