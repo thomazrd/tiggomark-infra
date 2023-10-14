@@ -61,6 +61,9 @@ services:
         published: 5433
         protocol: tcp
         mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
 
   postgres:
     image: postgres:12
