@@ -2,6 +2,25 @@ version: '3.7'
 
 services:
 
+  redis_whatsapp_api:
+    image: redis:alpine
+    hostname: rediswhatsapp
+    command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
+    env_file:
+      - .env-whatsapp-api
+    deploy:
+      replicas: 1
+
+    volumes:
+      - redis_data_whatsapp_api:/data
+    ports:
+      - target: 6379
+        published: 6375
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
 
 
   mariadb:
@@ -188,27 +207,7 @@ services:
       - tiggomark_network
       - nginx_network
 
-  redis_whatsapp_api:
-    image: redis:alpine
-    hostname: rediswhatsapp
-    command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
-    env_file:
-      - .env-whatsapp-api
-    deploy:
-      replicas: 1
 
-    volumes:
-      - redis_data_whatsapp_api:/data
-    ports:
-      - target: 6379
-        published: 6375
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-    # Definição do Nome do Serviço
   whatsapp_api:
     # imagem do Evolution
     image: tiggomark/evolution-api:latest
@@ -285,8 +284,7 @@ services:
       # *****************************************************************************************
       # Habilita o Webhook Global
       - WEBHOOK_GLOBAL_ENABLED=false
-      # Define o endereço do Webhook Global
-      - WEBHOOK_GLOBAL_URL=https://URL
+
       # Habilita ou Desabilita os Webhooks
       - WEBHOOK_GLOBAL_WEBHOOK_BY_EVENTS=false
       # Configura para receber o evento no inicio da aplicação
