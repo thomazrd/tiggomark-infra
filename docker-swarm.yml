@@ -526,6 +526,10 @@ services:
 
     networks:
       - tiggomark_network
+    deploy:
+      resources:
+        limits:
+          cpus: 1 # Defina o limite de CPU desejado aqui
 
   db_npm:
     hostname: db_npm
