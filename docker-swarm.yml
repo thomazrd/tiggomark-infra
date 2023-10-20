@@ -40,27 +40,7 @@ services:
       - tiggomark_network
       - nginx_network
 
-  n8n:
-    image: docker.n8n.io/n8nio/n8n
-    hostname: n8n-hostname
-    volumes:
-      -  n8n_data:/home/node/.n8n
-    environment:
-      - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_DATABASE=n8n
-      - DB_POSTGRESDB_HOST=postgres-hostname
-      - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_USER=postgres
-      - DB_POSTGRESDB_PASSWORD=123456789
-    ports:
-      - target: 5678
-        published: 5678
-        protocol: tcp
-        mode: ingress
 
-    networks:
-      - tiggomark_network
-      - nginx_network
 
 
   postgres-chatplus:
