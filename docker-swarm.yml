@@ -34,7 +34,18 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
     deploy:
-      replicas: 1
+      #mode: replicated # sempre como replicated
+      replicas: 1 # geralmente somente 1 réplica
+        #placement:
+        #constraints:
+      #- node.role == manager
+      # - node.hostname == worker1
+      resources:
+        limits:
+          # Define a quantidade de CPU para o Evolution para evitar travamento do Host
+          cpus: "1"
+          # Define a quantidade de RAM para o Evolution para evitar travamento do Host
+          memory: 4024M
 
     networks:
       - tiggomark_network
@@ -48,6 +59,10 @@ services:
     hostname: postgres-chatplus
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
     volumes:
       - postgres_chatplus_data:/var/lib/postgresql/data
     environment:
@@ -69,6 +84,10 @@ services:
     hostname: postgres-hostname
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -113,6 +132,12 @@ services:
   reports:
     hostname: reports-hostname
     image: metabase/metabase:latest
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
     environment:
       MB_DB_TYPE: mysql
       MB_DB_DBNAME: metabase
@@ -148,6 +173,10 @@ services:
     hostname: powchat-hostname
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
     ports:
       - target: 3000
         published: 3000
@@ -164,6 +193,12 @@ services:
       - RAILS_ENV=production
       - INSTALLATION_ENV=docker
     command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
     networks:
       - tiggomark_network
       - nginx_network
@@ -173,6 +208,10 @@ services:
     hostname: redis-hostname
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
     command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
     env_file:
       - chatplus.env
@@ -329,6 +368,12 @@ services:
   mongodb:
     container_name: mongodb
     hostname: mongodb
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
     image: mongo
     ports:
       - target: 27017
@@ -376,8 +421,10 @@ services:
     image: tiggomark/clusteragent:latest
     deploy:
       replicas: 1
-
-
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
     ports:
       - target: 8089
         published: 8089
@@ -421,8 +468,13 @@ services:
   markee:
       image: tiggomark/markee:latest
       hostname: markee-hostname
+
       deploy:
         replicas: 1
+        resources:
+          limits:
+            cpus: "1"
+            memory: 4024M
 
       ports:
         - target: 80
@@ -450,6 +502,10 @@ services:
     hostname: saas-connector-hostname
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
 
     env_file:
       - common.env
@@ -474,6 +530,10 @@ services:
     #command: --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC --innodb-force-recovery=1
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
 
     environment:
       MYSQL_DATABASE: 'saasconnector'
@@ -507,9 +567,11 @@ services:
     networks:
       - tiggomark_network
     deploy:
+      replicas: 1
       resources:
         limits:
-          cpus: 1 # Defina o limite de CPU desejado aqui
+          cpus: "1"
+          memory: 4024M
 
   db_npm:
     hostname: db_npm
@@ -572,6 +634,10 @@ services:
       hostname: intersaas
       deploy:
         replicas: 1
+        resources:
+          limits:
+            cpus: "1"
+            memory: 4024M
 
       ports:
         - target: 8080
