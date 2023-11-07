@@ -428,21 +428,6 @@ services:
       - nginx_network
 
 
-  portainer:
-    image: portainer/portainer-ce:latest
-    hostname: portainer-hostname
-    ports:
-      - target: 9000
-        published: 9000
-        protocol: tcp
-        mode: ingress
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
-    networks:
-      - tiggomark_network
-
-
   markee:
       image: tiggomark/markee:latest
       hostname: markee-hostname
