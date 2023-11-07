@@ -358,7 +358,7 @@ services:
       resources:
         limits:
           # Define a quantidade de CPU para o Evolution para evitar travamento do Host
-          cpus: 2
+          cpus: "2"
           # Define a quantidade de RAM para o Evolution para evitar travamento do Host
           memory: 8048M
 
