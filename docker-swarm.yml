@@ -2,6 +2,27 @@ version: '3.7'
 
 services:
 
+  redis_whatsapp_api:
+    image: redis:alpine
+    hostname: rediswhatsapp
+    command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
+    env_file:
+      - .env-whatsapp-api
+    deploy:
+      replicas: 1
+
+    volumes:
+      - redis_data_whatsapp_api:/data
+    ports:
+      - target: 6379
+        published: 6375
+        protocol: tcp
+        mode: ingress
+    networks:
+      - tiggomark_network
+      - nginx_network
+
+
   mariadb:
     image: mariadb:10.2
     hostname: mariadb
@@ -234,12 +255,12 @@ services:
       - SERVER_URL=http://whatsapp_api:8080
       - DOCKER_ENV=true
       # Configura o Nível de Log
-      - LOG_LEVEL=ERROR
+      - LOG_LEVEL=ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS
       # Determina quanto tempo uma instância fica na memoria sem ser conectada
       # caso não queria remover instâncias sem conexão, deixe como false
       - DEL_INSTANCE=true
       # Configura o dispositivo
-      - CONFIG_SESSION_PHONE_CLIENT=WhatsApp
+      - CONFIG_SESSION_PHONE_CLIENT=Powchat
       - CONFIG_SESSION_PHONE_NAME=Chrome
       # *****************************************************************************************
       # Configura o Webhook
@@ -319,13 +340,14 @@ services:
       - WEBHOOK_EVENTS_GROUP_PARTICIPANTS_UPDATE=true
       # Configura para enviar um webhook para quando a conexão cair ou voltar
       - WEBHOOK_EVENTS_CONNECTION_UPDATE=true
-      # Configura o rabbitMQ
-      - RABBITMQ_ENABLED=true
-      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
+      # Configura o Redis
+      - REDIS_ENABLED=true
+      - REDIS_URI=redis://redis_whatsapp_api:6379
       # Cors - * for all or set separate by commas -  ex.: 'yourdomain1.com, yourdomain2.com'
       - CORS_ORIGIN=https://app.powchat.com.br,localhost,*
       - CORS_METHODS=PATCH,OPTIONS,POST,GET,PUT,DELETE
       - CORS_CREDENTIALS=true
+    # Configura o Modo de Deploy da Aplicação
     deploy:
       #mode: replicated # sempre como replicated
       replicas: 1 # geralmente somente 1 réplica
@@ -336,9 +358,9 @@ services:
       resources:
         limits:
           # Define a quantidade de CPU para o Evolution para evitar travamento do Host
-          cpus: "1"
+          cpus: 2
           # Define a quantidade de RAM para o Evolution para evitar travamento do Host
-          memory: 4024M
+          memory: 8048M
 
 
 
