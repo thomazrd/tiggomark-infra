@@ -2,35 +2,27 @@ version: '3.7'
 
 services:
 
-  mariadb:
-    image: mariadb:10.2
-    hostname: mariadb
+  redis_whatsapp_api:
+    image: redis:alpine
+    hostname: rediswhatsapp
+    command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
     environment:
-      MYSQL_DATABASE: DB_markee
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: 123456789
-      MYSQL_ROOT_PASSWORD: 123456789
-    volumes:
-      - mariadb_data:/var/lib/mysql
+      - REDIS_ENABLED=true
+      - REDIS_URI=redis://rediswhatsapp:6379
+      - REDIS_PREFIX_KEY=evdocker
     deploy:
-      #mode: replicated # sempre como replicated
-      replicas: 1 # geralmente somente 1 réplica
-        #placement:
-        #constraints:
-      #- node.role == manager
-      # - node.hostname == worker1
-      resources:
-        limits:
-          # Define a quantidade de CPU para o Evolution para evitar travamento do Host
-          cpus: "1"
-          # Define a quantidade de RAM para o Evolution para evitar travamento do Host
-          memory: 4024M
+      replicas: 1
 
+    volumes:
+      - redis_data_whatsapp_api:/data
+    ports:
+      - target: 6379
+        published: 6375
+        protocol: tcp
+        mode: ingress
     networks:
       - tiggomark_network
       - nginx_network
-
-
 
 
   postgres-chatplus:
@@ -52,31 +44,6 @@ services:
     ports:
       - target: 5432
         published: 5433
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-      - nginx_network
-
-  postgres:
-    image: postgres:12
-    hostname: postgres-hostname
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "1"
-          memory: 4024M
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=chatwoot_production
-      - POSTGRES_USER=postgres
-      # Please provide your own password.
-      - POSTGRES_PASSWORD=123456789
-    ports:
-      - target: 5432
-        published: 5432
         protocol: tcp
         mode: ingress
     networks:
@@ -106,38 +73,52 @@ services:
       - tiggomark_network
       - nginx_network
 
-
-
-  reports:
-    hostname: reports-hostname
-    image: metabase/metabase:latest
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "1"
-          memory: 4024M
-    environment:
-      MB_DB_TYPE: mysql
-      MB_DB_DBNAME: metabase
-      MB_DB_PORT: 3306
-      MB_DB_USER: root
-      MB_DB_PASS: 123456789
-      MB_DB_HOST: mysql_8
-    command: sh -c "java -jar /app/metabase.jar migrate release-locks && java -jar /app/metabase.jar"
-    ports:
-      - target: 3000
-        published: 3001
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-      - nginx_network
-
   chatplusbase: &chatplusbase
     image: tiggomark/chatplus:latest
-    env_file:
-        - chatplus.env
+    environment:
+      - FRONTEND_URL=https://novo.girazap.com.br
+      - NODE_ENV=production
+      - SECRET_KEY_BASE=FjSizE5QvmBWPZoyqoGqesnTXRMG4u5Ju5VenOLH4YofePgtDxjK0YP2p3qEowF5
+      - FORCE_SSL=false
+      - DEFAULT_LOCALE=pt_BR
+      - BRAND_NAME=Girazap
+      - ENABLE_ACCOUNT_SIGNUP=true
+      - RAILS_ENV=production
+      - REDIS_URL=redis://redis:6379
+      - REDIS_OPENSSL_VERIFY_MODE=none
+      - RAILS_MAX_THREADS=10
+      - INSTALLATION_ENV=docker
+      - HELPCENTER_URL=https://novo.girazap.com.br
+      - POSTGRES_HOST=postgres-chatplus
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=123456789
+      - MAILER_SENDER_EMAIL=contato@powchat.com.br
+      - MAILER_SUPPORT_EMAIL=contato@powchat.com.br
+      - MAILER_INBOUND_EMAIL_DOMAIN=powchat.com.br
+      - SMTP_DOMAIN=smtppro.zoho.com
+      - SMTP_ADDRESS=smtppro.zoho.com
+      - SMTP_PORT=465
+      - SMTP_USERNAME=contato@powchat.com.br
+      - SMTP_PASSWORD=@Leghacy171296
+      - SMTP_AUTHENTICATION=login
+      - SMTP_ENABLE_STARTTLS_AUTO=false
+      - SMTP_OPENSSL_VERIFY_MODE=none
+      - SMTP_TLS=true
+      - FB_VERIFY_TOKEN=@Leghacy171296
+      - FB_APP_SECRET=9beb45b993cd43768941415fcef1fe69
+      - FB_APP_ID=1579473235907233
+      - NEW_RELIC_LICENSE_KEY=a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL
+      - NEW_RELIC_APPLICATION_LOGGING_ENABLED=true
+      - WEB_CONCURRENCY=3
+      - INSTALLATION_NAME=Girazap
+      - RAILS_LOG_TO_STDOUT=true
+      - LOG_LEVEL=info
+      - LOG_SIZE=500
+      - CREATE_NEW_ACCOUNT_FROM_DASHBOARD=true
+      - IG_VERIFY_TOKEN=@Leghacy171296
+      - ENABLE_PUSH_RELAY_SERVER=true
+      - DIRECT_UPLOADS_ENABLED=true
+      - SIDEKIQ_CONCURRENCY=100
     volumes:
       - chatplus_data_storage:/app/storage
 
@@ -192,8 +173,9 @@ services:
           cpus: "1"
           memory: 4024M
     command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
-    env_file:
-      - chatplus.env
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - REDIS_OPENSSL_VERIFY_MODE=none
     volumes:
       - redis_data_cl:/data
     ports:
@@ -234,12 +216,12 @@ services:
       - SERVER_URL=http://whatsapp_api:8080
       - DOCKER_ENV=true
       # Configura o Nível de Log
-      - LOG_LEVEL=ERROR
+      - LOG_LEVEL=ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS
       # Determina quanto tempo uma instância fica na memoria sem ser conectada
       # caso não queria remover instâncias sem conexão, deixe como false
       - DEL_INSTANCE=true
       # Configura o dispositivo
-      - CONFIG_SESSION_PHONE_CLIENT=WhatsApp
+      - CONFIG_SESSION_PHONE_CLIENT=Powchat
       - CONFIG_SESSION_PHONE_NAME=Chrome
       # *****************************************************************************************
       # Configura o Webhook
@@ -319,13 +301,14 @@ services:
       - WEBHOOK_EVENTS_GROUP_PARTICIPANTS_UPDATE=true
       # Configura para enviar um webhook para quando a conexão cair ou voltar
       - WEBHOOK_EVENTS_CONNECTION_UPDATE=true
-      # Configura o rabbitMQ
-      - RABBITMQ_ENABLED=true
-      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
+      # Configura o Redis
+      - REDIS_ENABLED=true
+      - REDIS_URI=redis://redis_whatsapp_api:6379
       # Cors - * for all or set separate by commas -  ex.: 'yourdomain1.com, yourdomain2.com'
       - CORS_ORIGIN=https://app.powchat.com.br,localhost,*
       - CORS_METHODS=PATCH,OPTIONS,POST,GET,PUT,DELETE
       - CORS_CREDENTIALS=true
+    # Configura o Modo de Deploy da Aplicação
     deploy:
       #mode: replicated # sempre como replicated
       replicas: 1 # geralmente somente 1 réplica
@@ -475,60 +458,6 @@ services:
         - nginx_network
 
 
-  saas_connector:
-    image: tiggomark/saasconnector:latest
-    hostname: saas-connector-hostname
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "1"
-          memory: 4024M
-
-    env_file:
-      - common.env
-      - saas-connector.env
-    depends_on:
-        - mysql_8
-
-    volumes:
-      - saas_connector_files:/var/uploadfiles
-    networks:
-      - tiggomark_network
-      - nginx_network
-    ports:
-      - target: 8089
-        published: 8085
-        protocol: tcp
-        mode: ingress
-
-  mysql_8:
-    image: mysql:8
-    hostname: mysql_8
-    #command: --default-authentication-plugin=mysql_native_password --wait_timeout=120 --innodb_buffer_pool_size=256M --innodb_log_file_size=100M --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT_NO_FSYNC --innodb-force-recovery=1
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "1"
-          memory: 4024M
-
-    environment:
-      MYSQL_DATABASE: 'saasconnector'
-      #MYSQL_INIT_CONNECT: "SET SESSION wait_timeout = 300;"
-      MYSQL_USER: 'admin'
-      MYSQL_PASSWORD: 123456789
-      MYSQL_ROOT_PASSWORD: 123456789
-    volumes:
-      - mysql_8_data:/var/lib/mysql
-    ports:
-      - target: 3306
-        published: 4500
-        protocol: tcp
-        mode: ingress
-    networks:
-      - tiggomark_network
-
 
   rabbitmq:
     hostname: rabbitmq
@@ -591,7 +520,7 @@ services:
           - node.role == manager
           #- node.hostname == worker1
     environment:
-      DB_MYSQL_HOST: "mysql_8"
+      DB_MYSQL_HOST: "db_npm"
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: "npm"
       DB_MYSQL_PASSWORD: "123456789"
@@ -599,104 +528,27 @@ services:
       # Uncomment this if IPv6 is not enabled on your host
       DISABLE_IPV6: 'true'
     volumes:
-      - ./ssl/nginx.conf:/etc/nginx/custom.conf
       - npm_data:/data
       - npm_letsencrypt:/etc/letsencrypt
     networks:
       - tiggomark_network
       - nginx_network
 
-
-  intersaas:
-      image: tiggomark/intersaas:latest
-      hostname: intersaas
-      deploy:
-        replicas: 1
-        resources:
-          limits:
-            cpus: "1"
-            memory: 4024M
-
-      ports:
-        - target: 8080
-          published: 8084
-          protocol: tcp
-          mode: ingress
-      env_file:
-        - common.env
-        - intersaas.env
-      environment:
-        #NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
-        SPRING_PROFILES_ACTIVE: prod
-        DB_HOST: mysql_8
-        DB_USERNAME: root
-        DB_PASSWORD: 123456789
-        DB_PORT: 3306
-        DB_NAME: SAAS_INTEGRATOR_ROOT_DB
-        RABBIT_MQ_HOST: rabbitmq
-
-      networks:
-        - tiggomark_network
-        - nginx_network
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    environment:
-      PMA_HOST: mariadb
-      PMA_PORT: 3306
-      PMA_USER: root
-      PMA_PASSWORD: 123456789
-      UPLOAD_LIMIT: 300M
-    ports:
-      - '7071:80'
-    networks:
-      - tiggomark_network
-
-  phpmyadmin2:
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    environment:
-      PMA_HOST: mysql_8
-      PMA_PORT: 3306
-      PMA_USER: root
-      PMA_PASSWORD: 123456789
-      UPLOAD_LIMIT: 300M
-    ports:
-      - '7070:80'
-    networks:
-      - tiggomark_network
-
 volumes:
   postgres_data:
-  n8n_data:
   postgres_chatplus_data:
   typebot-db-data:
   npm_data:
   npm_letsencrypt:
   rabbitmq-data-prod:
   portainer_data:
-  projects_user-files:
-  projects_public_user-files:
-  mysql_8_data:
   db_npm_data:
-  tiggocrm:
-  crm_upload_files:
-  saas_connector_files:
   redis_data_cl:
   redis_data_whatsapp_api:
   mariadb_data:
-  markee_html_files:
   chatplus_data_storage:
   whatsapp_api_instances:
   whatsapp_api_store:
-  mongodb_data:
-  mongodb_configdb:
-  mongo_iadocs_data:
-  db_crm_data_cluster1:
-  ia-doc-indexes:
-  ia-doc-inputs:
-  ia-doc-vectors:
   api_evolution_instances:
     external: true
     name: api_evolution_instances

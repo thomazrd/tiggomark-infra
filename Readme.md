@@ -8,6 +8,7 @@
 Deploy da stack docker 
 
 docker stack deploy -c docker-swarm.yml cluster
+docker stack deploy -c docker-swarm-cluster.yml cluster
 
 
 Ex de como fazer restore dos dados (Usar com muito cuidado):
