@@ -341,7 +341,9 @@ services:
       # Configura para enviar um webhook para quando a conexão cair ou voltar
       - WEBHOOK_EVENTS_CONNECTION_UPDATE=true
 
-      - REDIS_ENABLED=false
+      - REDIS_ENABLED=true
+      - REDIS_URI=redis://rediswhatsapp:6379
+      - REDIS_PREFIX_KEY=evdocker
       - RABBITMQ_ENABLED=true
       - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
       # Cors - * for all or set separate by commas -  ex.: 'yourdomain1.com, yourdomain2.com'
