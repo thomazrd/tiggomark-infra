@@ -342,7 +342,7 @@ services:
       - WEBHOOK_EVENTS_CONNECTION_UPDATE=true
 
       - REDIS_ENABLED=false
-      - RABBITMQ_ENABLED=false
+      - RABBITMQ_ENABLED=true
       - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
       # Cors - * for all or set separate by commas -  ex.: 'yourdomain1.com, yourdomain2.com'
       - CORS_ORIGIN=https://app.powchat.com.br,localhost,*
