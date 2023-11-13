@@ -252,23 +252,23 @@ services:
       # Configurações Gerais
       # *****************************************************************************************
       # Configura o Evolution para ler as variáveis de ambiente
-      - SERVER_URL=http://whatsapp_api:8080
+      - SERVER_URL=https://whatsapp.tiggomark.com.br
       - DOCKER_ENV=true
       # Configura o Nível de Log
       - LOG_LEVEL=ERROR
       # Determina quanto tempo uma instância fica na memoria sem ser conectada
       # caso não queria remover instâncias sem conexão, deixe como false
-      - DEL_INSTANCE=true
+      - DEL_INSTANCE=false
       # Configura o dispositivo
-      - CONFIG_SESSION_PHONE_CLIENT=Powchat
+      - CONFIG_SESSION_PHONE_CLIENT=WhatsApp
       - CONFIG_SESSION_PHONE_NAME=Chrome
       # *****************************************************************************************
       # Configura o Webhook
       # *****************************************************************************************
       # Armazena as mensagens temporariamente
-      - STORE_MESSAGES=false
+      - STORE_MESSAGES=true
       # Armazena mensagens enviadas temporariamente
-      - STORE_MESSAGE_UP=false
+      - STORE_MESSAGE_UP=true
       # Armazenos os contatos temporariamente
       - STORE_CONTACTS=true
       # Armazena o ID das conversas que não estão arquivadas temporariamente
@@ -340,7 +340,7 @@ services:
       - WEBHOOK_EVENTS_GROUP_PARTICIPANTS_UPDATE=true
       # Configura para enviar um webhook para quando a conexão cair ou voltar
       - WEBHOOK_EVENTS_CONNECTION_UPDATE=true
-
+      # Configura o rabbitMQ
       - REDIS_ENABLED=true
       - REDIS_URI=redis://rediswhatsapp:6379
       - REDIS_PREFIX_KEY=evdocker
@@ -349,7 +349,13 @@ services:
       - CORS_ORIGIN=https://app.powchat.com.br,localhost,*
       - CORS_METHODS=PATCH,OPTIONS,POST,GET,PUT,DELETE
       - CORS_CREDENTIALS=true
-    # Configura o Modo de Deploy da Aplicação
+      # Permanent data storage
+      - DATABASE_ENABLED=true
+      - DATABASE_CONNECTION_URI=mongodb://root:root@mongodb:27017/?authSource=admin&readPreference=primary&ssl=false&directConnection=true
+      - DATABASE_CONNECTION_DB_PREFIX_NAME=ev
+
+      # Choose the data you want to save in the application's database or store
+      - DATABASE_SAVE_DATA_INSTANCE=true
     deploy:
       #mode: replicated # sempre como replicated
       replicas: 1 # geralmente somente 1 réplica
