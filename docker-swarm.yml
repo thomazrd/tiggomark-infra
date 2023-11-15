@@ -226,151 +226,47 @@ services:
       - tiggomark_network
       - nginx_network
 
-
   whatsapp_api:
-    # imagem do Evolution
     image: tiggomark/evolution-api:latest
-    # Nome do containner
     hostname: whatsapp_api
-    # comando padrão para subir o servidor web
+    #ports:
+    #- 8282:8080
     command: [ "node", "./dist/src/main.js" ]
-    # configura a rede do serviço
+    volumes:
+      - eapi_instances:/evolution/instances
+      - eapi_store:/evolution/store
+    environment:
+      SERVER_URL: https://whatsapp.tiggomark.com.br
+      CONFIG_SESSION_PHONE_CLIENT: Web
+      AUTHENTICATION_TYPE: apikey
+      AUTHENTICATION_API_KEY: Y6D711FCDE4D4FD5936D44120E7139G6
+      QRCODE_LIMIT: 10
+      CLEAN_STORE_CLEANING_INTERVAL: 7200
+      CLEAN_STORE_MESSAGES: true
+      CLEAN_STORE_MESSAGE_UP: true
+      CLEAN_STORE_CONTACTS: true
+      CLEAN_STORE_CHATS: true
+      REDIS_ENABLED: true
+      REDIS_URI: redis://rediswhatsapp:6379
+      REDIS_PREFIX_KEY: evdocker
+      CORS_ORIGIN: https://app.powchat.com.br,localhost,*
+      CORS_METHODS: PATCH,OPTIONS,POST,GET,PUT,DELETE
+      CORS_CREDENTIALS: true
+      LOG_LEVEL: ERROR
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4048M
+      placement:
+        constraints:
+          - node.role == manager
+
     networks:
       - tiggomark_network
       - nginx_network
-    ports:
-      - target: 8080
-        published: 8080
-        protocol: tcp
-        mode: ingress
-    volumes:
-      - api_evolution_instances:/evolution/instances
-      - api_evolution_store:/evolution/store
-    # Variáveis de ambiente para configurar o Evolution
-    environment:
-      # *****************************************************************************************
-      # Configurações Gerais
-      # *****************************************************************************************
-      # Configura o Evolution para ler as variáveis de ambiente
-      - SERVER_URL=https://whatsapp.tiggomark.com.br
-      - DOCKER_ENV=true
-      # Configura o Nível de Log
-      - LOG_LEVEL=ERROR
-      # Determina quanto tempo uma instância fica na memoria sem ser conectada
-      # caso não queria remover instâncias sem conexão, deixe como false
-      - DEL_INSTANCE=false
-      # Configura o dispositivo
-      - CONFIG_SESSION_PHONE_CLIENT=WhatsApp
-      - CONFIG_SESSION_PHONE_NAME=Chrome
-      # *****************************************************************************************
-      # Configura o Webhook
-      # *****************************************************************************************
-      # Armazena as mensagens temporariamente
-      - STORE_MESSAGES=true
-      # Armazena mensagens enviadas temporariamente
-      - STORE_MESSAGE_UP=true
-      # Armazenos os contatos temporariamente
-      - STORE_CONTACTS=true
-      # Armazena o ID das conversas que não estão arquivadas temporariamente
-      - STORE_CHATS=true
-      # *****************************************************************************************
-      # Limpeza dos arquivos temporários
-      # *****************************************************************************************
-      # Configura o intervalo de limpeza dos arquivos temporários
-      # O sistema vai limpar tudo a cada x tempo
-      - CLEAN_STORE_CLEANING_INTERVAL=7200 # seconds === 2h
-      # Habilita a limpeza das mensagens
-      - CLEAN_STORE_MESSAGES=true
-      # Habilita a limpeza das mensagens enviadas
-      - CLEAN_STORE_MESSAGE_UP=true
-      # Habilita a limpeza dos contatos
-      - CLEAN_STORE_CONTACTS=true
-      # Habilita a limpeza do ID das conversas que não estão arquivadas
-      - CLEAN_STORE_CHATS=true
-      # *****************************************************************************************
-      # Autenticação da API
-      # *****************************************************************************************
-      # Configura o Evolution para autenticar como API Key
-      - AUTHENTICATION_TYPE=apikey
-      # Define a API Key Global
-      - AUTHENTICATION_API_KEY=Y6D711FCDE4D4FD5936D44120E7139G6 # ALTERE SUA APIKEY
-      # Define se a apikey será exibida quando for listar instâncias
-      - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
-      # Configura quantos qrcode serão gerados
-      - QRCODE_LIMIT=10
-      # *****************************************************************************************
-      # Configurações do Webhook
-      # *****************************************************************************************
-      # Habilita o Webhook Global
-      - WEBHOOK_GLOBAL_ENABLED=false
-
-      # Habilita ou Desabilita os Webhooks
-      - WEBHOOK_GLOBAL_WEBHOOK_BY_EVENTS=false
-      # Configura para receber o evento no inicio da aplicação
-      - WEBHOOK_EVENTS_APPLICATION_STARTUP=false
-      # Configura para Receber um Webhook quando o QRCode for gerado
-      - WEBHOOK_EVENTS_QRCODE_UPDATED=true
-      # Configura para enviar um webhook com tdas as mensagens ao conectar ao whatsapp
-      - WEBHOOK_EVENTS_MESSAGES_SET=true
-      # Configura para enviar um webhook com as mensagens novas
-      - WEBHOOK_EVENTS_MESSAGES_UPSERT=true
-      # Configura para enviar um webhook com as mensagens atualizadas
-      - WEBHOOK_EVENTS_MESSAGES_UPDATE=true
-      # Configura para enviar um webhook com todos os contatos ao conectar ao whatsapp
-      - WEBHOOK_EVENTS_CONTACTS_SET=true
-      # Configura para enviar um webhook com os contatos novos
-      - WEBHOOK_EVENTS_CONTACTS_UPSERT=true
-      # Configura para enviar um webhook com os contatos atualizados
-      - WEBHOOK_EVENTS_CONTACTS_UPDATE=true
-      # Configura para enviar um webhook quando um contato estiver online
-      - WEBHOOK_EVENTS_PRESENCE_UPDATE=true
-      # Configura para enviar um webhook com todos os chats quando conectar ao whatsapp
-      - WEBHOOK_EVENTS_CHATS_SET=true
-      # Configura para enviar um webhook com os chats novos
-      - WEBHOOK_EVENTS_CHATS_UPSERT=true
-      # Configura para enviar um webhook com os chats atualizados
-      - WEBHOOK_EVENTS_CHATS_UPDATE=true
-      # Configura para enviar um webhook quando um chat for arquivado
-      - WEBHOOK_EVENTS_CHATS_DELETE=true
-      # Configura para enviar um webhook para quando um grupo for criado
-      - WEBHOOK_EVENTS_GROUPS_UPSERT=true
-      # Configura para enviar um webhook para quando um grupo for atualizado
-      - WEBHOOK_EVENTS_GROUPS_UPDATE=true
-      # Configura para enviar um webhook para quando participante entrar/sair do grupo
-      - WEBHOOK_EVENTS_GROUP_PARTICIPANTS_UPDATE=true
-      # Configura para enviar um webhook para quando a conexão cair ou voltar
-      - WEBHOOK_EVENTS_CONNECTION_UPDATE=true
-      # Configura o rabbitMQ
-      - REDIS_ENABLED=true
-      - REDIS_URI=redis://rediswhatsapp:6379
-      - REDIS_PREFIX_KEY=evdocker
-
-      # Cors - * for all or set separate by commas -  ex.: 'yourdomain1.com, yourdomain2.com'
-      - CORS_ORIGIN=https://app.powchat.com.br,localhost,*
-      - CORS_METHODS=PATCH,OPTIONS,POST,GET,PUT,DELETE
-      - CORS_CREDENTIALS=true
-      # Permanent data storage
-      - DATABASE_ENABLED=true
-      - DATABASE_CONNECTION_URI=mongodb://root:root@mongodb:27017/?authSource=admin&readPreference=primary&ssl=false&directConnection=true
-      - DATABASE_CONNECTION_DB_PREFIX_NAME=ev
-
-      # Choose the data you want to save in the application's database or store
-      - DATABASE_SAVE_DATA_INSTANCE=true
-    deploy:
-      #mode: replicated # sempre como replicated
-      replicas: 1 # geralmente somente 1 réplica
-      #placement:
-        #constraints:
-          #- node.role == manager
-          # - node.hostname == worker1
-      resources:
-        limits:
-          # Define a quantidade de CPU para o Evolution para evitar travamento do Host
-          cpus: "2"
-          # Define a quantidade de RAM para o Evolution para evitar travamento do Host
-          memory: 8048M
-
-
 
 
   mongodb:
@@ -684,6 +580,8 @@ services:
 
 volumes:
   postgres_data:
+  eapi_instances:
+  eapi_store:
   n8n_data:
   postgres_chatplus_data:
   typebot-db-data:
