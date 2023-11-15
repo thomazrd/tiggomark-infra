@@ -236,23 +236,23 @@ services:
       - eapi_instances:/evolution/instances
       - eapi_store:/evolution/store
     environment:
-      SERVER_URL: https://whatsapp.tiggomark.com.br
-      CONFIG_SESSION_PHONE_CLIENT: Web
-      AUTHENTICATION_TYPE: apikey
-      AUTHENTICATION_API_KEY: Y6D711FCDE4D4FD5936D44120E7139G6
-      QRCODE_LIMIT: 10
-      CLEAN_STORE_CLEANING_INTERVAL: 7200
-      CLEAN_STORE_MESSAGES: true
-      CLEAN_STORE_MESSAGE_UP: true
-      CLEAN_STORE_CONTACTS: true
-      CLEAN_STORE_CHATS: true
-      REDIS_ENABLED: true
-      REDIS_URI: redis://rediswhatsapp:6379
-      REDIS_PREFIX_KEY: evdocker
-      CORS_ORIGIN: https://app.powchat.com.br,localhost,*
-      CORS_METHODS: PATCH,OPTIONS,POST,GET,PUT,DELETE
-      CORS_CREDENTIALS: "true"
-      LOG_LEVEL: ERROR
+     - SERVER_URL=https://whatsapp.tiggomark.com.br
+     - CONFIG_SESSION_PHONE_CLIENT=Web
+     - AUTHENTICATION_TYPE=apikey
+     - AUTHENTICATION_API_KEY=Y6D711FCDE4D4FD5936D44120E7139G6
+     - QRCODE_LIMIT=10
+     - CLEAN_STORE_CLEANING_INTERVAL=7200
+     - CLEAN_STORE_MESSAGES=true
+     - CLEAN_STORE_MESSAGE_UP=true
+     - CLEAN_STORE_CONTACTS=true
+     - CLEAN_STORE_CHATS=true
+     - REDIS_ENABLED=true
+     - REDIS_URI=redis://rediswhatsapp:6379
+     - REDIS_PREFIX_KEY=evdocker
+     - CORS_ORIGIN=https://app.powchat.com.br,localhost,*
+     - CORS_METHODS=PATCH,OPTIONS,POST,GET,PUT,DELETE
+     - CORS_CREDENTIALS=true
+     - LOG_LEVEL=ERROR
     deploy:
       mode: replicated
       replicas: 1
