@@ -251,7 +251,7 @@ services:
       REDIS_PREFIX_KEY: evdocker
       CORS_ORIGIN: https://app.powchat.com.br,localhost,*
       CORS_METHODS: PATCH,OPTIONS,POST,GET,PUT,DELETE
-      CORS_CREDENTIALS: true
+      CORS_CREDENTIALS: "true"
       LOG_LEVEL: ERROR
     deploy:
       mode: replicated
