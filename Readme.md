@@ -2,6 +2,8 @@
 
 
 
+Alterar permisao dos arquivo
+chmod 777 configure-vm.sh
 
 
 
