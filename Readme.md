@@ -13,6 +13,14 @@ docker stack deploy -c docker-swarm.yml cluster
 docker stack deploy -c docker-swarm-cluster.yml cluster
 
 
+sudo nano /etc/docker/daemon.json
+{
+  "iptables": true,
+  "dns": ["8.8.8.8", "8.8.4.4"]
+}
+reiniciar o docker apos alteracao
+
+
 Ex de como fazer restore dos dados (Usar com muito cuidado):
 ./restore_data.sh /home/tiggomark/Documents/volumes/db cluster_saas_connector_db_data_cl
 
