@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
 
-    n8n:
+  n8n:
     image: n8nio/n8n:latest
     hostname: n8n-hostname
     deploy:
@@ -70,7 +70,7 @@ services:
       #mode: replicated # sempre como replicated
       replicas: 1 # geralmente somente 1 réplica
         #placement:
-        #constraints:
+      #constraints:
       #- node.role == manager
       # - node.hostname == worker1
       resources:
@@ -223,23 +223,23 @@ services:
       - eapi_instances:/evolution/instances
       - eapi_store:/evolution/store
     environment:
-     - SERVER_URL=https://whatsapp-api.tiggomark.online
-     - CONFIG_SESSION_PHONE_CLIENT=Web
-     - AUTHENTICATION_TYPE=apikey
-     - AUTHENTICATION_API_KEY=Y6D711FCDE4D4FD5936D44120E7139G6
-     - QRCODE_LIMIT=10
-     - CLEAN_STORE_CLEANING_INTERVAL=7200
-     - CLEAN_STORE_MESSAGES=true
-     - CLEAN_STORE_MESSAGE_UP=true
-     - CLEAN_STORE_CONTACTS=true
-     - CLEAN_STORE_CHATS=true
-     - REDIS_ENABLED=true
-     - REDIS_URI=redis://rediswhatsapp:6379
-     - REDIS_PREFIX_KEY=evdocker
-     - CORS_ORIGIN=https://app.powchat.com.br,localhost,*
-     - CORS_METHODS=PATCH,OPTIONS,POST,GET,PUT,DELETE
-     - CORS_CREDENTIALS=true
-     - LOG_LEVEL=ERROR
+      - SERVER_URL=https://whatsapp-api.tiggomark.online
+      - CONFIG_SESSION_PHONE_CLIENT=Web
+      - AUTHENTICATION_TYPE=apikey
+      - AUTHENTICATION_API_KEY=Y6D711FCDE4D4FD5936D44120E7139G6
+      - QRCODE_LIMIT=10
+      - CLEAN_STORE_CLEANING_INTERVAL=7200
+      - CLEAN_STORE_MESSAGES=true
+      - CLEAN_STORE_MESSAGE_UP=true
+      - CLEAN_STORE_CONTACTS=true
+      - CLEAN_STORE_CHATS=true
+      - REDIS_ENABLED=true
+      - REDIS_URI=redis://rediswhatsapp:6379
+      - REDIS_PREFIX_KEY=evdocker
+      - CORS_ORIGIN=https://app.powchat.com.br,localhost,*
+      - CORS_METHODS=PATCH,OPTIONS,POST,GET,PUT,DELETE
+      - CORS_CREDENTIALS=true
+      - LOG_LEVEL=ERROR
     deploy:
       mode: replicated
       replicas: 1
@@ -305,7 +305,7 @@ services:
     links:
       - mongodb
 
-   ###################################################
+    ###################################################
 
   cluster_agent:
     hostname: clusteragent-hostname
@@ -342,35 +342,35 @@ services:
 
 
   markee:
-      image: tiggomark/markee:latest
-      hostname: markee-hostname
+    image: tiggomark/markee:latest
+    hostname: markee-hostname
 
-      deploy:
-        replicas: 1
-        resources:
-          limits:
-            cpus: "1"
-            memory: 4024M
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
 
-      ports:
-        - target: 80
-          published: 8086
-          protocol: tcp
-          mode: ingress
+    ports:
+      - target: 80
+        published: 8086
+        protocol: tcp
+        mode: ingress
 
-      environment:
-        MAUTIC_DB_HOST: mariadb
-        MAUTIC_DB_PASSWORD: 123456789
-        MAUTIC_DB_USER: root
-        MAUTIC_DB_PORT: 3306
-        MAUTIC_DB_NAME: DB_markee
+    environment:
+      MAUTIC_DB_HOST: mariadb
+      MAUTIC_DB_PASSWORD: 123456789
+      MAUTIC_DB_USER: root
+      MAUTIC_DB_PORT: 3306
+      MAUTIC_DB_NAME: DB_markee
 
-      volumes:
-        - markee_html_files:/var/www/html
+    volumes:
+      - markee_html_files:/var/www/html
 
-      networks:
-        - tiggomark_network
-        - nginx_network
+    networks:
+      - tiggomark_network
+      - nginx_network
 
 
   saas_connector:
@@ -387,7 +387,7 @@ services:
       - common.env
       - saas-connector.env
     depends_on:
-        - mysql_8
+      - mysql_8
 
     volumes:
       - saas_connector_files:/var/uploadfiles
@@ -506,36 +506,36 @@ services:
 
 
   intersaas:
-      image: tiggomark/intersaas:latest
-      hostname: intersaas
-      deploy:
-        replicas: 1
-        resources:
-          limits:
-            cpus: "1"
-            memory: 4024M
+    image: tiggomark/intersaas:latest
+    hostname: intersaas
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 4024M
 
-      ports:
-        - target: 8080
-          published: 8084
-          protocol: tcp
-          mode: ingress
-      env_file:
-        - common.env
-        - intersaas.env
-      environment:
-        #NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
-        SPRING_PROFILES_ACTIVE: prod
-        DB_HOST: mysql_8
-        DB_USERNAME: root
-        DB_PASSWORD: 123456789
-        DB_PORT: 3306
-        DB_NAME: SAAS_INTEGRATOR_ROOT_DB
-        RABBIT_MQ_HOST: rabbitmq
+    ports:
+      - target: 8080
+        published: 8084
+        protocol: tcp
+        mode: ingress
+    env_file:
+      - common.env
+      - intersaas.env
+    environment:
+      #NEW_RELIC_LICENSE_KEY: 'a7befd5b85c71de724a6fcf7c4f13e91FFFFNRAL'
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: mysql_8
+      DB_USERNAME: root
+      DB_PASSWORD: 123456789
+      DB_PORT: 3306
+      DB_NAME: SAAS_INTEGRATOR_ROOT_DB
+      RABBIT_MQ_HOST: rabbitmq
 
-      networks:
-        - tiggomark_network
-        - nginx_network
+    networks:
+      - tiggomark_network
+      - nginx_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -609,16 +609,10 @@ networks:
   tiggomark_network:
     driver: overlay
     ipam:
-        config:
-            - subnet: 10.0.9.0/24
+      config:
+        - subnet: 10.0.9.0/24
     attachable: true
 
   nginx_network:
     driver: overlay
     attachable: true
-
-
-
-
-
-
