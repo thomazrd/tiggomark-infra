@@ -2,6 +2,30 @@ version: '3.7'
 
 services:
 
+  botpress:
+    image: botpress/server:v12_31_9
+    hostname: botpress-hostname
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 2048M
+    environment:
+      # Configure variáveis de ambiente conforme necessário
+      BP_PRODUCTION: "true"
+      DATABASE_URL: postgres://postgres:123456789@postgres-hostname:5432/botpress_db
+    ports:
+      - target: 3000
+        published: 3002
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - botpress_data:/botpress/data
+    networks:
+      - tiggomark_network
+      - nginx_network
+
   n8n:
     image: n8nio/n8n:latest
     hostname: n8n-hostname
@@ -78,7 +102,7 @@ services:
           # Define a quantidade de CPU para o Evolution para evitar travamento do Host
           cpus: "1"
           # Define a quantidade de RAM para o Evolution para evitar travamento do Host
-          memory: 4024M
+          memory: 2024M
 
     networks:
       - tiggomark_network
