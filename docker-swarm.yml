@@ -590,6 +590,7 @@ services:
       - tiggomark_network
 
 volumes:
+  botpress_data:
   postgres_data:
   eapi_instances:
   eapi_store:
