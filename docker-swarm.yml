@@ -592,6 +592,9 @@ services:
 volumes:
   botpress_data:
   kanboard_data:
+  kanboard_plugins:
+  kanboard_plugins:
+  kanboard_data:
   postgres_data:
   eapi_instances:
   eapi_store:
