@@ -33,6 +33,8 @@ services:
     volumes:
       - chatplus_data_storage:/app/storage
 
+
+
   chatplus:
     <<: *chatplusbase
     environment:
@@ -41,11 +43,12 @@ services:
       - INSTALLATION_ENV=docker
     entrypoint: |
       /bin/sh -c "
+      bundle check || bundle install &&
       bundle exec rails db:chatwoot_prepare &&
       bundle exec rails db:migrate &&
-      docker/entrypoints/rails.sh
+      rm -f /app/tmp/pids/server.pid &&
+      bundle exec rails s -p 3000 -b 0.0.0.0
       "
-    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
     hostname: powchat-hostname
     deploy:
       replicas: 1
@@ -61,6 +64,7 @@ services:
     networks:
       - tiggomark_network
       - nginx_network
+  
   chatplus_sidekiq:
     <<: *chatplusbase
     environment:
